@@ -10,17 +10,23 @@
     <groupId>com.builders.admin</groupId>
     <artifactId>admin</artifactId>
 
+    <properties>
+        <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
+        <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
+        <artifact.version>1.0</artifact.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>${maven.jar.plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven.assembly.plugin.version}</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -45,20 +51,24 @@
     </build>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>junit</groupId>-->
+<!--            <artifactId>junit</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.builders.services</groupId>
             <artifactId>services</artifactId>
-            <version>1.0</version>
+            <version>${artifact.version}</version>
         </dependency>
         <dependency>
             <groupId>com.builders.utils</groupId>
             <artifactId>utils</artifactId>
-            <version>1.0</version>
+            <version>${artifact.version}</version>
         </dependency>
         <dependency>
             <groupId>com.builders.web</groupId>
             <artifactId>web</artifactId>
-            <version>1.0</version>
+            <version>${artifact.version}</version>
             <type>war</type>
         </dependency>
     </dependencies>

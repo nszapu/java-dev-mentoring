@@ -1,0 +1,13 @@
+plugins {
+    id 'war'
+}
+
+dependencies {
+    implementation project(':services')
+    implementation project(':utils')
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+}
+
+war {
+    enabled = true
+}
