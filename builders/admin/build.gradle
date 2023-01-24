@@ -4,6 +4,7 @@ dependencies {
     implementation project(':services')
     implementation project(':utils')
     implementation project(':web')
+    testImplementation 'junit:junit:' + junitVersion
 }
 
 application {

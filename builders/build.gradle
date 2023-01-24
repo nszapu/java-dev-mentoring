@@ -8,12 +8,17 @@ subprojects {
     }
 
     dependencies {
-         testImplementation 'junit:junit:4.13.2'
+         testImplementation 'junit:junit:' + junitVersion
     }
 
     test {
         testLogging {
             events "started", "skipped", "passed", "failed"
         }
+    }
+
+    java {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
     }
 }

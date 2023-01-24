@@ -4,13 +4,15 @@
 
     <groupId>com.builders</groupId>
     <artifactId>builders</artifactId>
-    <version>${artifact.version</version>
+    <version>1.0</version>
     <packaging>pom</packaging>
 
     <properties>
         <junit.version>4.13.2</junit.version>
         <javax.servlet.version>4.0.1</javax.servlet.version>
         <artifact.version>1.0</artifact.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
