@@ -1,0 +1,24 @@
+subprojects {
+    apply plugin: 'java'
+
+    version = '1.0.0'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+         testImplementation 'junit:junit:' + junitVersion
+    }
+
+    test {
+        testLogging {
+            events "started", "skipped", "passed", "failed"
+        }
+    }
+
+    java {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+    }
+}
