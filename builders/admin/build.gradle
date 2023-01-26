@@ -1,0 +1,21 @@
+apply plugin: 'application'
+
+dependencies {
+    implementation project(':services')
+    implementation project(':utils')
+    implementation project(':web')
+    testImplementation 'junit:junit:' + junitVersion
+}
+
+application {
+    mainClassName = 'com.builders.admin.AdminEntryPoint'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.builders.admin.AdminEntryPoint'
+        attributes 'Build-Jdk-Spec': '1.8'
+    }
+    archivesBaseName = 'fat'
+    from configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+}
