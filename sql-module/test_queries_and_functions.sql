@@ -1,3 +1,8 @@
+-- taks 1 and 2
+-- Design database for CDP program. Your DB should store information about students 
+-- (name, surname, date of birth, phone numbers, primary skill, created_datetime, updated_datetime etc.),
+-- subjects (subject name, tutor, etc.) and exam results (student, subject, mark).
+-- Please add appropriate constraints (primary keys, foreign keys, indexes, etc.).
 DROP TABLE IF EXISTS students;
 
 CREATE TABLE students
@@ -38,16 +43,26 @@ COPY students FROM 'C:/workspace/dev-mentoring/sql-module/Student2.csv' DELIMITE
 COPY subjects FROM 'C:/workspace/dev-mentoring/sql-module/Subject.csv' DELIMITER ',' CSV HEADER;
 COPY results FROM 'C:/workspace/dev-mentoring/sql-module/Result.csv' DELIMITER ',' CSV HEADER;
 
-SELECT DISTINCT student_id, first_name FROM students where first_name = 'Jack';
+-- task 4
+-- Try different kind of indexes (B-tree, Hash, GIN, GIST) for your fields.
+-- Analyze performance for each of the indexes (use ANALYZE and EXPLAIN).
+-- Check the size of the index. Try to set index before inserting test data and after. What was the time? Test data:
+-- task a
+EXPLAIN ANALYZE SELECT * FROM students where first_name = 'Jack';
 
-SELECT * FROM students where last_name = 'Cooper';
+-- task b
+EXPLAIN ANALYZE SELECT * FROM students where last_name LIKE '%Co%';
 
-SELECT * FROM students where phone_number = '405-523-1230';
+-- task c
+EXPLAIN ANALYZE SELECT * FROM students where phone_number LIKE '%405%';
 
-SELECT s.*, r.mark FROM students s INNER JOIN results r
-	ON s.student_id=r.student_id WHERE last_name = 'Cooper';
+-- task d
+EXPLAIN ANALYZE SELECT s.*, r.mark FROM students s INNER JOIN results r
+	ON s.student_id=r.student_id WHERE last_name LIKE '%Co%';
 	
 	
+-- task 8
+-- Create function that will return average mark for input user.
 CREATE OR REPLACE FUNCTION get_average_result_by_student(int, out res float)
 RETURNS float AS
 $BODY$
@@ -60,6 +75,8 @@ LANGUAGE plpgsql;
 
 SELECT get_average_result_by_student(3372);
 
+-- task 9
+-- Create function that will return avarage mark for input subject name.
 CREATE OR REPLACE FUNCTION get_average_result_by_subject(text, out res float)
 RETURNS float AS
 $BODY$
@@ -72,6 +89,8 @@ LANGUAGE plpgsql;
 
 SELECT get_average_result_by_subject('Mathematics');
 
+-- task 10
+-- Create function that will return student at "red zone" (red zone means at least 2 marks <=3).
 CREATE OR REPLACE FUNCTION get_redzone_students()
 RETURNS SETOF students AS
 $BODY$
@@ -84,9 +103,3 @@ $BODY$
 LANGUAGE plpgsql;
 
 SELECT get_redzone_students();
-
-
-SELECT * FROM students WHERE student_id IN 
-(SELECT student_id as poor_mark_count FROM results 
-WHERE mark <= 3 GROUP BY student_id HAVING COUNT(mark) >= 2)
-
