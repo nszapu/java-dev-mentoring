@@ -47,6 +47,44 @@ COPY results FROM 'C:/workspace/dev-mentoring/sql-module/Result.csv' DELIMITER '
 -- Try different kind of indexes (B-tree, Hash, GIN, GIST) for your fields.
 -- Analyze performance for each of the indexes (use ANALYZE and EXPLAIN).
 -- Check the size of the index. Try to set index before inserting test data and after. What was the time? Test data:
+
+drop index student_id_index;
+drop index first_name_index;
+drop index last_name_index;
+drop index phone_number_index;
+drop index subject_id_index;
+drop index result_id_index;
+
+create index student_id_index on students using btree (student_id);
+create index first_name_index on students using btree (first_name);
+create index last_name_index on students using btree (last_name);
+create index phone_number_index on students using btree (phone_number);
+create index subject_id_index on subjects using btree (subject_id);
+create index result_id_index on results using btree (student_id, subject_id);
+
+create index student_id_index on students using hash (student_id);
+create index first_name_index on students using hash (first_name);
+create index last_name_index on students using hash (last_name);
+create index phone_number_index on students using hash (phone_number);
+create index subject_id_index on subjects using hash (subject_id);
+create index result_id_index on results using hash (results_id);
+
+create extension pg_trgm; 
+
+create index student_id_index on students using gin (text(student_id) gin_trgm_ops);
+create index first_name_index on students using gin (first_name gin_trgm_ops);
+create index last_name_index on students using gin (last_name gin_trgm_ops);
+create index phone_number_index on students using gin (phone_number gin_trgm_ops);
+create index subject_id_index on subjects using gin (text(subject_id) gin_trgm_ops);
+create index result_id_index on results using gin (text(results_id) gin_trgm_ops);
+
+create index student_id_index on students using gist (text(student_id) gist_trgm_ops);
+create index first_name_index on students using gist (first_name gist_trgm_ops);
+create index last_name_index on students using gist (last_name gist_trgm_ops);
+create index phone_number_index on students using gist (phone_number gist_trgm_ops);
+create index subject_id_index on subjects using gist (text(subject_id) gist_trgm_ops);
+create index result_id_index on results using gist (text(results_id) gist_trgm_ops);
+
 -- task a
 EXPLAIN ANALYZE SELECT * FROM students where first_name = 'Jack';
 
