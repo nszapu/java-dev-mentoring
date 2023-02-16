@@ -4,10 +4,12 @@ import com.epam.core.facade.BookingFacade;
 import com.epam.core.model.Event;
 import com.epam.core.model.Ticket;
 import com.epam.core.model.User;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class BookingService implements BookingFacade {
 
     private EventService eventService;

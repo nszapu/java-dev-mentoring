@@ -1,40 +1,55 @@
 package com.epam.core.dao;
 
+import com.epam.core.Application;
+import com.epam.core.entity.UserEntity;
 import com.epam.core.model.User;
+import com.epam.core.repository.Storage;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 
-public class UserDao implements User {
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-    private long id;
-    private String name;
-    private String email;
+public class UserDao {
 
-    @Override
-    public long getId() {
-        return id;
+    @Getter
+    @Setter
+    private String usersPath;
+    private List<User> users = new ArrayList<>();
+    private ObjectMapper mapper = new ObjectMapper();
+    ClassLoader classLoader = Application.class.getClassLoader();
+    @Getter
+    @Setter
+    private Storage repository;
+
+    public void loadUsersFromFile() throws IOException {
+        users = Arrays.asList(mapper.readValue(new File(classLoader.getResource(usersPath).getFile()), UserEntity[].class));
+        users.forEach(event -> repository.save("user", event));
     }
 
-    @Override
-    public void setId(long id) {
-        this.id = id;
+    public User get(long id) {
+        return (User) repository.get("user", id);
     }
 
-    @Override
-    public String getName() {
-        return name;
+    public List<User> getUsers() {
+        List<User> result = new ArrayList<>();
+        for (Object key: repository.getKeyArray()){
+            if (key.toString().startsWith("user")){
+                result.add((User) repository.get(key.toString()));
+            }
+        }
+        return result;
     }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
+    public void save(User user) {
+        repository.save("user", user);
     }
 
-    @Override
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public void setEmail(String email) {
-        this.email = email;
+    public boolean delete(long id) {
+        return repository.delete("user", id);
     }
 }

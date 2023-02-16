@@ -1,9 +1,7 @@
 package com.epam.core.service;
 
-import com.epam.core.model.Ticket;
+import com.epam.core.dao.UserDao;
 import com.epam.core.model.User;
-import com.epam.core.repository.Storage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,15 +10,14 @@ import java.util.List;
 @Service
 public class UserService {
 
-    @Autowired
-    private Storage repository;
+    private UserDao userDao;
 
-    public UserService(Storage repository) {
-        this.repository = repository;
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public User getUserById(long userId) {
-        for (User user: repository.getUsers()) {
+        for (User user: userDao.getUsers()) {
             if (user.getId() == userId) {
                 return user;
             }
@@ -30,7 +27,7 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        for (User user: repository.getUsers()) {
+        for (User user: userDao.getUsers()) {
             if (user.getEmail().equals(email)) {
                 return user;
             }
@@ -41,7 +38,7 @@ public class UserService {
 
     public List<User> getUsersByName(String name, int pageSize, int pageNum) {
         List<User> result = new ArrayList<>();
-        for (User user: repository.getUsers()) {
+        for (User user: userDao.getUsers()) {
             if (user.getName().equals(name)) {
                 result.add(user);
             }
@@ -50,16 +47,16 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        repository.save("user", user);
+        userDao.save(user);
         return user;
     }
 
     public User updateUser(User user) {
-        repository.save("user", user);
+        userDao.save(user);
         return user;
     }
 
     public boolean deleteUser(long userId) {
-        return repository.delete("user", userId);
+        return userDao.delete(userId);
     }
 }
