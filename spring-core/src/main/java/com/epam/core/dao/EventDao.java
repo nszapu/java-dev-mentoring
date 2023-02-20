@@ -21,7 +21,7 @@ public class EventDao {
     private String eventsPath;
     private List<Event> events = new ArrayList<>();
     private ObjectMapper mapper = new ObjectMapper();
-    ClassLoader classLoader = Application.class.getClassLoader();
+    private ClassLoader classLoader = Application.class.getClassLoader();
     @Getter
     @Setter
     private Storage repository;
@@ -45,8 +45,8 @@ public class EventDao {
         return result;
     }
 
-    public void save(Event event) {
-        repository.save("event", event);
+    public Event save(Event event) {
+        return (Event) repository.save("event", event);
     }
 
     public boolean delete(long id) {

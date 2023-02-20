@@ -34,7 +34,7 @@ public class BookingService implements BookingFacade {
 
     @Override
     public List<Event> getEventsForDay(Date day, int pageSize, int pageNum) {
-        return eventService.getEventsForDay(day, pageSize, pageNum);
+        return eventService.getEventsByDay(day, pageSize, pageNum);
     }
 
     @Override

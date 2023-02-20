@@ -21,7 +21,7 @@ public class UserDao {
     private String usersPath;
     private List<User> users = new ArrayList<>();
     private ObjectMapper mapper = new ObjectMapper();
-    ClassLoader classLoader = Application.class.getClassLoader();
+    private ClassLoader classLoader = Application.class.getClassLoader();
     @Getter
     @Setter
     private Storage repository;
@@ -45,8 +45,8 @@ public class UserDao {
         return result;
     }
 
-    public void save(User user) {
-        repository.save("user", user);
+    public User save(User user) {
+        return (User) repository.save("user", user);
     }
 
     public boolean delete(long id) {

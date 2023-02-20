@@ -11,6 +11,6 @@ public class Application {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("application_context.xml");
         BookingFacade bookingFacade = applicationContext.getBean(BookingService.class);
 
-        System.out.println(bookingFacade.getUserById(3));
+        bookingFacade.getEventById(1);
     }
 }

@@ -5,11 +5,13 @@ import com.epam.core.entity.TicketEntity;
 import com.epam.core.model.Event;
 import com.epam.core.model.Ticket;
 import com.epam.core.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class TicketService {
 
@@ -26,12 +28,13 @@ public class TicketService {
             }
         }
         Ticket ticket = new TicketEntity();
-        ticket.setId(123);
+        ticket.setId(ticketDao.getTickets().size() + 1);
         ticket.setEventId(eventId);
         ticket.setUserId(userId);
         ticket.setPlace(place);
         ticket.setCategory(category);
-        return ticket;
+        log.info("This ticket was booked: " + ticket);
+        return ticketDao.save(ticket);
     }
 
     public List<Ticket> getBookedTickets(User user, int pageSize, int pageNum) {
@@ -41,6 +44,7 @@ public class TicketService {
                 result.add(ticket);
             }
         }
+        log.info("These tickets were returned: " + result);
         return result;
     }
 
@@ -51,10 +55,12 @@ public class TicketService {
                 result.add(ticket);
             }
         }
+        log.info("These tickets were returned: " + result);
         return result;
     }
 
     public boolean cancelTicket(long ticketId) {
+        log.info("The ticket with this id was canceled: " + ticketId);
         return ticketDao.delete(ticketId);
     }
 }
