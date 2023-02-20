@@ -2,11 +2,13 @@ package com.epam.core.service;
 
 import com.epam.core.dao.UserDao;
 import com.epam.core.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -19,6 +21,7 @@ public class UserService {
     public User getUserById(long userId) {
         for (User user: userDao.getUsers()) {
             if (user.getId() == userId) {
+                log.info("This user was returned: " + user);
                 return user;
             }
         }
@@ -29,6 +32,7 @@ public class UserService {
     public User getUserByEmail(String email) {
         for (User user: userDao.getUsers()) {
             if (user.getEmail().equals(email)) {
+                log.info("This user was returned: " + user);
                 return user;
             }
         }
@@ -43,20 +47,22 @@ public class UserService {
                 result.add(user);
             }
         }
+        log.info("These users were returned: " + result);
         return result;
     }
 
     public User createUser(User user) {
-        userDao.save(user);
-        return user;
+        log.info("This user was saved to the repository: " + user);
+        return userDao.save(user);
     }
 
     public User updateUser(User user) {
-        userDao.save(user);
-        return user;
+        log.info("This user was updated: " + user);
+        return userDao.save(user);
     }
 
     public boolean deleteUser(long userId) {
+        log.info("The user with this id was deleted: " + userId);
         return userDao.delete(userId);
     }
 }

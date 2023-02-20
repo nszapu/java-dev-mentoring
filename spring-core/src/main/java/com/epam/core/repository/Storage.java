@@ -4,6 +4,7 @@ import com.epam.core.model.Entity;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -22,23 +23,18 @@ public class Storage {
         return repository.keySet().toArray();
     }
 
-    public void save(String entityType, Entity entity) {
+    public Entity save(String entityType, Entity entity) {
         repository.put(entityType + ":" + entity.getId(), entity);
+        return entity;
     }
 
     public boolean delete(String entityType, long id) {
-        try {
-            repository.remove(entityType + id);
-            return true;
-        } catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
+        return !Objects.isNull(repository.remove(entityType + ":" + id));
     }
 
     public String toString() {
         StringBuilder content = new StringBuilder();
-        repository.forEach((k, v) -> content.append(k).append(": ").append(v.toString()).append("\n"));
+        repository.forEach((k, v) -> content.append(k).append(": ").append(v).append("\n"));
         return content.toString();
     }
 }

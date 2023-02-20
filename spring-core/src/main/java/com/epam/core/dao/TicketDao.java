@@ -20,7 +20,7 @@ public class TicketDao {
     private String ticketsPath;
     private List<Ticket> tickets = new ArrayList<>();
     private ObjectMapper mapper = new ObjectMapper();
-    ClassLoader classLoader = Application.class.getClassLoader();
+    private ClassLoader classLoader = Application.class.getClassLoader();
     @Getter
     @Setter
     private Storage repository;
@@ -28,10 +28,6 @@ public class TicketDao {
     public void loadTicketsFromFile() throws IOException {
         tickets = Arrays.asList(mapper.readValue(new File(classLoader.getResource(ticketsPath).getFile()), TicketEntity[].class));
         tickets.forEach(event -> repository.save("ticket", event));
-    }
-
-    public Ticket get(long id) {
-        return (Ticket) repository.get("ticket", id);
     }
 
     public List<Ticket> getTickets() {
@@ -44,8 +40,9 @@ public class TicketDao {
         return result;
     }
 
-    public void save(Ticket ticket) {
+    public Ticket save(Ticket ticket) {
         repository.save("ticket", ticket);
+        return ticket;
     }
 
     public boolean delete(long id) {
