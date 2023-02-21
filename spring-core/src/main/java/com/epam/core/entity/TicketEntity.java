@@ -2,7 +2,6 @@ package com.epam.core.entity;
 
 import com.epam.core.model.Ticket;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 @Data
 public class TicketEntity implements Ticket {

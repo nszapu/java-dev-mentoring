@@ -9,16 +9,12 @@ import com.epam.core.model.Ticket;
 import com.epam.core.model.User;
 import com.epam.core.service.BookingService;
 import lombok.SneakyThrows;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
