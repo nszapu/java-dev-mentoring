@@ -5,9 +5,9 @@ import com.epam.core.model.Event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,23 +26,13 @@ public class EventService {
     }
 
     public List<Event> getEventsByTitle(String title, int pageSize, int pageNum) {
-        List<Event> result = new ArrayList<>();
-        for (Event event: eventDao.getEvents()) {
-            if (event.getTitle().equals(title)) {
-                result.add(event);
-            }
-        }
+        List<Event> result = eventDao.getEvents().stream().filter(event -> event.getTitle().equals(title)).collect(Collectors.toList());
         log.info("These events were returned: " + result);
         return result;
     }
 
     public List<Event> getEventsByDay(Date day, int pageSize, int pageNum) {
-        List<Event> result = new ArrayList<>();
-        for (Event event: eventDao.getEvents()) {
-            if (event.getDate().equals(day)) {
-                result.add(event);
-            }
-        }
+        List<Event> result = eventDao.getEvents().stream().filter(event -> event.getDate().equals(day)).collect(Collectors.toList());
         log.info("These events were returned: " + result);
         return result;
     }

@@ -8,8 +8,8 @@ import com.epam.core.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -38,23 +38,13 @@ public class TicketService {
     }
 
     public List<Ticket> getBookedTickets(User user, int pageSize, int pageNum) {
-        List<Ticket> result = new ArrayList<>();
-        for (Ticket ticket: ticketDao.getTickets()) {
-            if (ticket.getUserId() == user.getId()) {
-                result.add(ticket);
-            }
-        }
+        List<Ticket> result = ticketDao.getTickets().stream().filter(ticket -> ticket.getUserId() == user.getId()).collect(Collectors.toList());
         log.info("These tickets were returned: " + result);
         return result;
     }
 
     public List<Ticket> getBookedTickets(Event event, int pageSize, int pageNum) {
-        List<Ticket> result = new ArrayList<>();
-        for (Ticket ticket: ticketDao.getTickets()) {
-            if (ticket.getEventId() == event.getId()) {
-                result.add(ticket);
-            }
-        }
+        List<Ticket> result = ticketDao.getTickets().stream().filter(ticket -> ticket.getEventId() == event.getId()).collect(Collectors.toList());
         log.info("These tickets were returned: " + result);
         return result;
     }

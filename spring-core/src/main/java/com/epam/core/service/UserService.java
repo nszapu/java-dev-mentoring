@@ -5,8 +5,8 @@ import com.epam.core.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,12 +41,7 @@ public class UserService {
     }
 
     public List<User> getUsersByName(String name, int pageSize, int pageNum) {
-        List<User> result = new ArrayList<>();
-        for (User user: userDao.getUsers()) {
-            if (user.getName().equals(name)) {
-                result.add(user);
-            }
-        }
+        List<User> result = userDao.getUsers().stream().filter(user -> user.getName().equals(name)).collect(Collectors.toList());
         log.info("These users were returned: " + result);
         return result;
     }

@@ -58,9 +58,14 @@ public class EventDaoTest {
 
     @Test
     public void testGetEvents() {
+        // given
         when(repository.getKeyArray()).thenReturn(new Object[] {"event:123"});
         when(repository.get("event:123")).thenReturn(event);
-        assertEquals(events.size(), eventDao.getEvents().size());
+        // when
+        List<Event> result = eventDao.getEvents();
+        // then
+        assertEquals(events.size(), result.size());
+        assertEquals(events, result);
     }
 
     @Test

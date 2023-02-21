@@ -47,14 +47,14 @@ public class EventServiceTest {
     public void testGetEventById() {
         when(eventDao.get(anyLong())).thenReturn(event);
         Event result = eventService.getEventById(anyLong());
-        assertEquals("test", result.getTitle());
+        assertEquals(event, result);
     }
 
     @Test
     public void testGetEventsByTitle() {
         when(eventDao.getEvents()).thenReturn(events);
         List<Event> result = eventService.getEventsByTitle("test", 1, 1);
-        assertEquals(events.size(), result.size());
+        assertEquals(events, result);
     }
 
     @SneakyThrows
@@ -62,7 +62,7 @@ public class EventServiceTest {
     public void testGetEventsByDay() {
         when(eventDao.getEvents()).thenReturn(events);
         List<Event> result = eventService.getEventsByDay(dateFormat.parse("2023-01-01"), 1, 1);
-        assertEquals(events.size(), result.size());
+        assertEquals(events, result);
     }
 
     @Test
