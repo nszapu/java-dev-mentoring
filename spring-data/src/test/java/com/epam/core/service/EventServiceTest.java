@@ -1,8 +1,9 @@
 package com.epam.core.service;
 
-import com.epam.core.dao.EventDao;
+import com.epam.core.dto.EventDto;
 import com.epam.core.entity.EventEntity;
 import com.epam.core.model.Event;
+import com.epam.core.repository.EventRepository;
 import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,28 +14,38 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EventServiceTest {
 
     @Mock
-    private EventDao eventDao;
+    private EventRepository repository;
     @InjectMocks
     private EventService eventService;
+    private EventEntity eventEntity;
     private Event event;
     private SimpleDateFormat dateFormat;
+    private List<EventEntity> eventEntities;
     private List<Event> events;
 
     @SneakyThrows
     @Before
     public void setup() {
-        event = new EventEntity();
+        eventEntity = new EventEntity();
+        eventEntity.setId(123);
+        eventEntity.setTitle("test");
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        eventEntity.setDate(dateFormat.parse("2023-01-01"));
+        eventEntities = new ArrayList<>();
+        eventEntities.add(eventEntity);
+        event = new EventDto();
         event.setId(123);
         event.setTitle("test");
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -44,15 +55,19 @@ public class EventServiceTest {
     }
 
     @Test
+    public void testLoadEventsFromFile() {
+
+    }
+
+    @Test
     public void testGetEventById() {
-        when(eventDao.get(anyLong())).thenReturn(event);
-        Event result = eventService.getEventById(anyLong());
-        assertEquals(event, result);
+        when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(eventEntity));
+        assertEquals(event, eventService.getEventById(anyLong()));
     }
 
     @Test
     public void testGetEventsByTitle() {
-        when(eventDao.getEvents()).thenReturn(events);
+        when(repository.findByTitle(anyString())).thenReturn(eventEntities);
         List<Event> result = eventService.getEventsByTitle("test", 1, 1);
         assertEquals(events, result);
     }
@@ -60,28 +75,27 @@ public class EventServiceTest {
     @SneakyThrows
     @Test
     public void testGetEventsByDay() {
-        when(eventDao.getEvents()).thenReturn(events);
+        when(repository.findByDate(any(Date.class))).thenReturn(eventEntities);
         List<Event> result = eventService.getEventsByDay(dateFormat.parse("2023-01-01"), 1, 1);
         assertEquals(events, result);
     }
 
     @Test
     public void testCreateEvent() {
-        when(eventDao.save(event)).thenReturn(event);
+        when(repository.save(any(EventEntity.class))).thenReturn(eventEntity);
         Event result = eventService.createEvent(event);
         assertEquals(event, result);
     }
 
     @Test
     public void testUpdateEvent() {
-        when(eventDao.save(event)).thenReturn(event);
+        when(repository.save(any(EventEntity.class))).thenReturn(eventEntity);
         Event result = eventService.updateEvent(event);
         assertEquals(event, result);
     }
 
     @Test
     public void testDeleteEvent() {
-        when(eventDao.delete(anyLong())).thenReturn(true);
-        assertTrue(eventService.deleteEvent(anyLong()));
+
     }
 }

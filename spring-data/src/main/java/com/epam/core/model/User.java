@@ -3,7 +3,7 @@ package com.epam.core.model;
 /**
  * Created by maksym_govorischev on 14/03/14.
  */
-public interface User extends Entity {
+public interface User {
     /**
      * User Id. UNIQUE.
      * @return User Id.

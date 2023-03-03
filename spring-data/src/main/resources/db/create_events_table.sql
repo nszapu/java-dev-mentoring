@@ -1,7 +1,8 @@
-drop table if exists events;
+drop table if exists events cascade;
 
 create table events (
     id serial primary key,
     title varchar(30),
-    date date
+    date date,
+	ticket_price integer
 );

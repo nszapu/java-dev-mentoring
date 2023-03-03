@@ -3,6 +3,7 @@ package com.epam.core.facade;
 import com.epam.core.model.Event;
 import com.epam.core.model.Ticket;
 import com.epam.core.model.User;
+import com.epam.core.model.UserAccount;
 
 import java.util.Date;
 import java.util.List;
@@ -139,4 +140,31 @@ public interface BookingFacade {
      */
     boolean cancelTicket(long ticketId);
 
+    /**
+     * Refill the UserAccount's balance.
+     * @param amount Refill amount.
+     * @return UserAccount which was refilled.
+     */
+    UserAccount refillUserAccountBalance(User user, int amount);
+
+    /**
+     * Creates new user. User account id should be auto-generated.
+     * @param userAccount User account data.
+     * @return Created User account object.
+     */
+    UserAccount createUserAccount(UserAccount userAccount);
+
+    /**
+     * Updates user account using given data.
+     * @param userAccount User account data for update. Should have id set.
+     * @return Updated User account object.
+     */
+    UserAccount updateUserAccount(UserAccount userAccount);
+
+    /**
+     * Deletes user account by its id.
+     * @param userAccountId User id.
+     * @return Flag that shows whether user account has been deleted.
+     */
+    boolean deleteUserAccount(long userAccountId);
 }

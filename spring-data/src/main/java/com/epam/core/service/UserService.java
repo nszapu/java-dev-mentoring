@@ -1,10 +1,18 @@
 package com.epam.core.service;
 
-import com.epam.core.dao.UserDao;
+import com.epam.core.dto.UserDto;
+import com.epam.core.entity.UserEntity;
 import com.epam.core.model.User;
+import com.epam.core.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,52 +20,65 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    private UserDao userDao;
+    @Value("${users.path}")
+    private String usersPath;
+    @Autowired
+    private UserRepository repository;
+    @Autowired
+    private ObjectMapper mapper;
+    @Autowired
+    private ClassLoader classLoader;
 
-    public UserService(UserDao userDao) {
-        this.userDao = userDao;
+    public void loadUsersFromFile() throws IOException {
+        List<UserEntity> users = Arrays.asList(mapper.readValue(new File(classLoader.getResource(usersPath).getFile()), UserEntity[].class));
+        users.forEach(user -> repository.save(user));
     }
 
     public User getUserById(long userId) {
-        for (User user: userDao.getUsers()) {
-            if (user.getId() == userId) {
-                log.info("This user was returned: " + user);
-                return user;
-            }
-        }
-//        throw new UserNotFoundException();
-        throw new RuntimeException();
+        return convertUserEntityToDto(repository.findById(userId).orElseThrow());
     }
 
     public User getUserByEmail(String email) {
-        for (User user: userDao.getUsers()) {
-            if (user.getEmail().equals(email)) {
-                log.info("This user was returned: " + user);
-                return user;
-            }
-        }
-//        throw new UserNotFoundException();
-        throw new RuntimeException();
+        return convertUserEntityToDto(repository.findByEmail(email).orElseThrow());
     }
 
     public List<User> getUsersByName(String name, int pageSize, int pageNum) {
-        List<User> result = userDao.getUsers().stream().filter(user -> user.getName().equals(name)).collect(Collectors.toList());
+        List<User> result = repository.findByName(name).stream().map(this::convertUserEntityToDto).collect(Collectors.toList());
         log.info("These users were returned: " + result);
         return result;
     }
 
     public User createUser(User user) {
         log.info("This user was created: " + user);
-        return userDao.save(user);
+        UserEntity userEntity = convertUserDtoToEntity(user);
+        return convertUserEntityToDto(repository.save(userEntity));
     }
 
     public User updateUser(User user) {
         log.info("This user was updated: " + user);
-        return userDao.save(user);
+        UserEntity userEntity = convertUserDtoToEntity(user);
+        return convertUserEntityToDto(repository.save(userEntity));
     }
 
     public boolean deleteUser(long userId) {
         log.info("The user with this id was deleted: " + userId);
-        return userDao.delete(userId);
+        repository.deleteById(userId);
+        return repository.existsById(userId);
+    }
+
+    private User convertUserEntityToDto(UserEntity userEntity) {
+        User user = new UserDto();
+        user.setId(userEntity.getId());
+        user.setName(userEntity.getName());
+        user.setEmail(userEntity.getEmail());
+        return user;
+    }
+
+    private UserEntity convertUserDtoToEntity(User user) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(user.getId());
+        userEntity.setName(user.getName());
+        userEntity.setEmail(user.getEmail());
+        return userEntity;
     }
 }

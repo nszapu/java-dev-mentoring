@@ -1,11 +1,7 @@
 package com.epam.core.service;
 
-import com.epam.core.dao.EventDao;
-import com.epam.core.dao.TicketDao;
-import com.epam.core.dao.UserDao;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -15,23 +11,21 @@ import java.io.IOException;
 @Service
 public class StorageInitializerService {
 
-    @Getter
-    @Setter
-    private EventDao eventDao;
-
-    @Getter
-    @Setter
-    private TicketDao ticketDao;
-
-    @Getter
-    @Setter
-    private UserDao userDao;
+    @Autowired
+    private EventService eventService;
+    @Autowired
+    private TicketService ticketService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserAccountService userAccountService;
 
     @PostConstruct
     public void processFiles() throws IOException {
-        eventDao.loadEventsFromFile();
-        ticketDao.loadTicketsFromFile();
-        userDao.loadUsersFromFile();
+        eventService.loadEventsFromFile();
+        userService.loadUsersFromFile();
+        ticketService.loadTicketsFromFile();
+        userAccountService.loadUserAccountsFromFile();
         log.info("Data from files were loaded into the repository.");
     }
 }

@@ -1,14 +1,24 @@
 package com.epam.core.entity;
 
-import com.epam.core.model.Ticket;
 import lombok.Data;
 
+import javax.persistence.*;
+
 @Data
-public class TicketEntity implements Ticket {
+@Entity
+@Table(name = "tickets")
+public class TicketEntity {
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private long eventId;
-    private long userId;
-    private Category category;
+    @ManyToOne
+    private EventEntity event;
+    @ManyToOne
+    private UserEntity user;
+    @Column
+    private String category;
+    @Column
     private int place;
 }
 

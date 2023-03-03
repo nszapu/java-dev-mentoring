@@ -3,7 +3,7 @@ package com.epam.core.model;
 /**
  * Created by maksym_govorischev.
  */
-public interface Ticket extends Entity{
+public interface Ticket {
     public enum Category {STANDARD, PREMIUM, BAR}
 
     /**

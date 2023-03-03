@@ -1,10 +1,18 @@
 package com.epam.core.service;
 
-import com.epam.core.dao.EventDao;
+import com.epam.core.dto.EventDto;
+import com.epam.core.entity.EventEntity;
 import com.epam.core.model.Event;
+import com.epam.core.repository.EventRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,42 +21,72 @@ import java.util.stream.Collectors;
 @Service
 public class EventService {
 
-    private EventDao eventDao;
+    @Value("${events.path}")
+    private String eventsPath;
+    @Autowired
+    private EventRepository repository;
+    @Autowired
+    private ObjectMapper mapper;
+    @Autowired
+    private ClassLoader classLoader;
 
-    public EventService(EventDao eventDao) {
-        this.eventDao = eventDao;
+    public void loadEventsFromFile() throws IOException {
+        List<EventEntity> events = Arrays.asList(mapper.readValue(new File(classLoader.getResource(eventsPath).getFile()), EventEntity[].class));
+        events.forEach(event -> repository.save(event));
     }
 
     public Event getEventById(long eventId) {
-        Event event = eventDao.get(eventId);
+        EventEntity eventEntity = repository.findById(eventId).orElseThrow();
+        Event event = convertEventEntityToDto(eventEntity);
         log.info("This event was returned: " + event);
         return event;
     }
 
     public List<Event> getEventsByTitle(String title, int pageSize, int pageNum) {
-        List<Event> result = eventDao.getEvents().stream().filter(event -> event.getTitle().equals(title)).collect(Collectors.toList());
+        List<Event> result = repository.findByTitle(title).stream().map(this::convertEventEntityToDto).collect(Collectors.toList());
         log.info("These events were returned: " + result);
         return result;
     }
 
     public List<Event> getEventsByDay(Date day, int pageSize, int pageNum) {
-        List<Event> result = eventDao.getEvents().stream().filter(event -> event.getDate().equals(day)).collect(Collectors.toList());
+        List<Event> result = repository.findByDate(day).stream().map(this::convertEventEntityToDto).collect(Collectors.toList());
         log.info("These events were returned: " + result);
         return result;
     }
 
     public Event createEvent(Event event) {
         log.info("This event was created: " + event);
-        return eventDao.save(event);
+        EventEntity eventEntity = convertEventDtoToEntity(event);
+        return convertEventEntityToDto(repository.save(eventEntity));
     }
 
     public Event updateEvent(Event event) {
         log.info("This event was updated: " + event);
-        return eventDao.save(event);
+        EventEntity eventEntity = convertEventDtoToEntity(event);
+        return convertEventEntityToDto(repository.save(eventEntity));
     }
 
     public boolean deleteEvent(long eventId) {
         log.info("The event with this id was deleted: " + eventId);
-        return eventDao.delete(eventId);
+        repository.deleteById(eventId);
+        return !repository.existsById(eventId);
+    }
+
+    private Event convertEventEntityToDto(EventEntity eventEntity) {
+        Event event = new EventDto();
+        event.setId(eventEntity.getId());
+        event.setTitle(eventEntity.getTitle());
+        event.setDate(eventEntity.getDate());
+        event.setTicketPrice(eventEntity.getTicketPrice());
+        return event;
+    }
+
+    private EventEntity convertEventDtoToEntity(Event event) {
+        EventEntity eventEntity = new EventEntity();
+        eventEntity.setId(event.getId());
+        eventEntity.setTitle(event.getTitle());
+        eventEntity.setDate(event.getDate());
+        eventEntity.setTicketPrice(event.getTicketPrice());
+        return eventEntity;
     }
 }

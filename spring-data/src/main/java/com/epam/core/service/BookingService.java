@@ -4,6 +4,7 @@ import com.epam.core.facade.BookingFacade;
 import com.epam.core.model.Event;
 import com.epam.core.model.Ticket;
 import com.epam.core.model.User;
+import com.epam.core.model.UserAccount;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,11 +16,14 @@ public class BookingService implements BookingFacade {
     private EventService eventService;
     private TicketService ticketService;
     private UserService userService;
+    private UserAccountService userAccountService;
 
-    public BookingService(EventService eventService, TicketService ticketService, UserService userService) {
+
+    public BookingService(EventService eventService, TicketService ticketService, UserService userService, UserAccountService userAccountService) {
         this.eventService = eventService;
         this.ticketService = ticketService;
         this.userService = userService;
+        this.userAccountService = userAccountService;
     }
 
     @Override
@@ -100,5 +104,25 @@ public class BookingService implements BookingFacade {
     @Override
     public boolean cancelTicket(long ticketId) {
         return ticketService.cancelTicket(ticketId);
+    }
+
+    @Override
+    public UserAccount refillUserAccountBalance(User user, int amount) {
+        return userAccountService.refillUserAccountBalance(user, amount);
+    }
+
+    @Override
+    public UserAccount createUserAccount(UserAccount userAccount) {
+        return userAccountService.createUserAccount(userAccount);
+    }
+
+    @Override
+    public UserAccount updateUserAccount(UserAccount userAccount) {
+        return userAccountService.updateUserAccount(userAccount);
+    }
+
+    @Override
+    public boolean deleteUserAccount(long userAccountId) {
+        return userAccountService.deleteUserAccount(userAccountId);
     }
 }

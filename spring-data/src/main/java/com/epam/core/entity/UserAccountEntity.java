@@ -3,20 +3,17 @@ package com.epam.core.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "events")
-public class EventEntity {
+@Table(name = "user_accounts")
+public class UserAccountEntity {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @OneToOne
+    private UserEntity user;
     @Column
-    private String title;
-    @Column
-    private Date date;
-    @Column
-    private int ticketPrice;
+    private int balance;
 }

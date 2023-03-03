@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by maksym_govorischev.
  */
-public interface Event extends Entity {
+public interface Event {
     /**
      * Event id. UNIQUE.
      * @return Event Id
@@ -16,4 +16,6 @@ public interface Event extends Entity {
     void setTitle(String title);
     Date getDate();
     void setDate(Date date);
+    int getTicketPrice();
+    void setTicketPrice(int ticketPrice);
 }
