@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -38,37 +39,39 @@ public class EventService {
     public Event getEventById(long eventId) {
         EventEntity eventEntity = repository.findById(eventId).orElseThrow();
         Event event = convertEventEntityToDto(eventEntity);
-        log.info("This event was returned: " + event);
+        log.info("Event was returned: {}", event);
         return event;
     }
 
     public List<Event> getEventsByTitle(String title, int pageSize, int pageNum) {
-        List<Event> result = repository.findByTitle(title).stream().map(this::convertEventEntityToDto).collect(Collectors.toList());
-        log.info("These events were returned: " + result);
+        List<Event> result = repository.findByTitle(title, PageRequest.of(pageNum, pageSize)).stream().map(this::convertEventEntityToDto).collect(Collectors.toList());
+        log.info("Events were returned: {}", result);
         return result;
     }
 
     public List<Event> getEventsByDay(Date day, int pageSize, int pageNum) {
-        List<Event> result = repository.findByDate(day).stream().map(this::convertEventEntityToDto).collect(Collectors.toList());
-        log.info("These events were returned: " + result);
+        List<Event> result = repository.findByDate(day, PageRequest.of(pageNum, pageSize)).stream().map(this::convertEventEntityToDto).collect(Collectors.toList());
+        log.info("Events were returned: {}", result);
         return result;
     }
 
     public Event createEvent(Event event) {
-        log.info("This event was created: " + event);
         EventEntity eventEntity = convertEventDtoToEntity(event);
-        return convertEventEntityToDto(repository.save(eventEntity));
+        Event result = convertEventEntityToDto(repository.save(eventEntity));
+        log.info("Event was created: {}", result);
+        return result;
     }
 
     public Event updateEvent(Event event) {
-        log.info("This event was updated: " + event);
         EventEntity eventEntity = convertEventDtoToEntity(event);
-        return convertEventEntityToDto(repository.save(eventEntity));
+        Event result = convertEventEntityToDto(repository.save(eventEntity));
+        log.info("Event was updated: {}", result);
+        return result;
     }
 
     public boolean deleteEvent(long eventId) {
-        log.info("The event with this id was deleted: " + eventId);
         repository.deleteById(eventId);
+        log.info("Event with id was deleted: {}", eventId);
         return !repository.existsById(eventId);
     }
 

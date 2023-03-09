@@ -3,6 +3,7 @@ package com.epam.core.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -15,5 +16,5 @@ public class UserAccountEntity {
     @OneToOne
     private UserEntity user;
     @Column
-    private int balance;
+    private BigDecimal balance;
 }

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -43,27 +44,31 @@ public class UserService {
     }
 
     public List<User> getUsersByName(String name, int pageSize, int pageNum) {
-        List<User> result = repository.findByName(name).stream().map(this::convertUserEntityToDto).collect(Collectors.toList());
-        log.info("These users were returned: " + result);
+        List<User> result = repository.findByName(name, PageRequest.of(pageNum, pageSize)).stream().map(this::convertUserEntityToDto).collect(Collectors.toList());
+        log.debug("These users were returned: " + result);
         return result;
     }
 
     public User createUser(User user) {
-        log.info("This user was created: " + user);
+        log.debug("Creating user: " + user);
         UserEntity userEntity = convertUserDtoToEntity(user);
-        return convertUserEntityToDto(repository.save(userEntity));
+        User result = convertUserEntityToDto(repository.save(userEntity));
+        log.info("User was created: {}", result);
+        return result;
     }
 
     public User updateUser(User user) {
-        log.info("This user was updated: " + user);
+        log.debug("Updating user: " + user);
         UserEntity userEntity = convertUserDtoToEntity(user);
-        return convertUserEntityToDto(repository.save(userEntity));
+        User result = convertUserEntityToDto(repository.save(userEntity));
+        log.info("User was updated: {}", result);
+        return result;
     }
 
     public boolean deleteUser(long userId) {
-        log.info("The user with this id was deleted: " + userId);
+        log.debug("Deleting user with id: " + userId);
         repository.deleteById(userId);
-        return repository.existsById(userId);
+        return !repository.existsById(userId);
     }
 
     private User convertUserEntityToDto(UserEntity userEntity) {

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,29 +40,31 @@ public class UserAccountService {
     }
 
     @Transactional
-    public UserAccount refillUserAccountBalance(User user, int amount) {
+    public UserAccount refillUserAccountBalance(User user, BigDecimal amount) {
         UserAccountEntity account = userAccountRepository.findByUserId(user.getId()).orElseThrow();
         account.setBalance(amount);
         UserAccount result = convertUserAccountEntityToDto(userAccountRepository.save(account));
-        log.info("Updating balance for user: " + user + ", user account: " + result);
+        log.info("User: {}, balance was updated on account: {}", user, result);
         return result;
     }
 
     public UserAccount createUserAccount(UserAccount userAccount) {
-        log.info("This userAccount was created: " + userAccount);
         UserAccountEntity userAccountEntity = convertUserAccountDtoToEntity(userAccount);
-        return convertUserAccountEntityToDto(userAccountRepository.save(userAccountEntity));
+        UserAccount result = convertUserAccountEntityToDto(userAccountRepository.save(userAccountEntity));
+        log.info("Account was created: " + result);
+        return result;
     }
 
     public UserAccount updateUserAccount(UserAccount userAccount) {
-        log.info("This userAccount was updated: " + userAccount);
         UserAccountEntity userAccountEntity = convertUserAccountDtoToEntity(userAccount);
-        return convertUserAccountEntityToDto(userAccountRepository.save(userAccountEntity));
+        UserAccount result = convertUserAccountEntityToDto(userAccountRepository.save(userAccountEntity));
+        log.info("Account was updated: " + result);
+        return result;
     }
 
     public boolean deleteUserAccount(long userAccountId) {
-        log.info("The userAccount with this id was deleted: " + userAccountId);
         userAccountRepository.deleteById(userAccountId);
+        log.info("Account with this id was deleted: {}", userAccountId);
         return !userAccountRepository.existsById(userAccountId);
     }
 

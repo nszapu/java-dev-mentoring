@@ -21,7 +21,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.PageRequest;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +32,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,6 +57,7 @@ public class TicketServiceTest {
     private EventEntity event;
     private UserAccountEntity account;
     private UserEntity user;
+    private PageRequest pageRequest;
 
     @SneakyThrows
     @Before
@@ -75,7 +80,7 @@ public class TicketServiceTest {
         event.setTitle("test");
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         event.setDate(dateFormat.parse("2023-01-01"));
-        event.setTicketPrice(100);
+        event.setTicketPrice(BigDecimal.valueOf(100));
         ticketEntity.setEvent(event);
         ticketEntity.setPlace(1);
         ticketEntity.setCategory("PREMIUM");
@@ -84,20 +89,16 @@ public class TicketServiceTest {
         account = new UserAccountEntity();
         account.setId(1);
         account.setUser(user);
-        account.setBalance(1000);
-    }
-
-    @Test
-    public void testLoadTicketsFromFile() {
-
+        account.setBalance(BigDecimal.valueOf(1000));
+        pageRequest = PageRequest.of(1,1);
     }
 
     @Test
     public void testBookTicket() {
-        when(eventRepository.findById(anyLong())).thenReturn(Optional.ofNullable(event));
-        when(userAccountRepository.findByUserId(anyLong())).thenReturn(Optional.ofNullable(account));
-        when(ticketRepository.findByEventIdAndPlace(anyLong(), anyInt())).thenReturn(Collections.EMPTY_LIST);
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        when(eventRepository.findById(1L)).thenReturn(Optional.ofNullable(event));
+        when(userAccountRepository.findByUserId(1)).thenReturn(Optional.ofNullable(account));
+        when(ticketRepository.findByEventIdAndPlace(1, 1)).thenReturn(Collections.EMPTY_LIST);
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(user));
         when(ticketRepository.save(any(TicketEntity.class))).thenReturn(ticketEntity);
         Ticket result = ticketService.bookTicket(1, 1, 1, Ticket.Category.PREMIUM);
         assertEquals(ticket, result);
@@ -106,25 +107,25 @@ public class TicketServiceTest {
     @Test(expected = IllegalStateException.class)
     public void testBookTicketFail() {
         EventEntity eventEntity = new EventEntity();
-        eventEntity.setTicketPrice(1000);
+        eventEntity.setTicketPrice(BigDecimal.valueOf(1000));
         UserAccountEntity userAccountEntity = new UserAccountEntity();
-        userAccountEntity.setBalance(999);
-        when(eventRepository.findById(anyLong())).thenReturn(Optional.of(eventEntity));
-        when(userAccountRepository.findByUserId(anyLong())).thenReturn(Optional.of(userAccountEntity));
+        userAccountEntity.setBalance(BigDecimal.valueOf(999));
+        when(eventRepository.findById(1L)).thenReturn(Optional.of(eventEntity));
+        when(userAccountRepository.findByUserId(1)).thenReturn(Optional.of(userAccountEntity));
         ticketService.bookTicket(1, 1, 1, Ticket.Category.PREMIUM);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testBookTicketFail2() {
-        when(eventRepository.findById(anyLong())).thenReturn(Optional.ofNullable(event));
-        when(userAccountRepository.findByUserId(anyLong())).thenReturn(Optional.ofNullable(account));
-        when(ticketRepository.findByEventIdAndPlace(anyLong(), anyInt())).thenReturn(ticketEntities);
+        when(eventRepository.findById(1L)).thenReturn(Optional.ofNullable(event));
+        when(userAccountRepository.findByUserId(1)).thenReturn(Optional.ofNullable(account));
+        when(ticketRepository.findByEventIdAndPlace(1, 1)).thenReturn(ticketEntities);
         ticketService.bookTicket(1, 1, 1, Ticket.Category.PREMIUM);
     }
 
     @Test
     public void testGetBookedTicketsByUser() {
-        when(ticketRepository.findByUserId(anyLong())).thenReturn(ticketEntities);
+        when(ticketRepository.findByUserId(1, pageRequest)).thenReturn(ticketEntities);
         User user = new UserDto();
         user.setId(1);
         List<Ticket> result = ticketService.getBookedTickets(user, 1, 1);
@@ -133,7 +134,7 @@ public class TicketServiceTest {
 
     @Test
     public void testGetBookedTicketsByEvent() {
-        when(ticketRepository.findByEventId(anyLong())).thenReturn(ticketEntities);
+        when(ticketRepository.findByEventId(1, pageRequest)).thenReturn(ticketEntities);
         Event event = new EventDto();
         event.setId(1);
         List<Ticket> result = ticketService.getBookedTickets(event, 1, 1);
@@ -142,6 +143,8 @@ public class TicketServiceTest {
 
     @Test
     public void testCancelTicket() {
-
+        ticketService.cancelTicket(1);
+        verify(ticketRepository).deleteById(anyLong());
+        verify(ticketRepository).existsById(anyLong());
     }
 }

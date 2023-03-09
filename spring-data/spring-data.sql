@@ -4,7 +4,7 @@ create table events (
     id serial primary key,
     title varchar(30),
     date date,
-	ticket_price integer
+	ticket_price numeric(20, 2)
 );
 
 insert into events (title, date, ticket_price) values ('event1', now()::date, 50);
@@ -44,7 +44,7 @@ drop table if exists user_accounts;
 create table user_accounts (
 	id serial primary key,
 	user_id integer,
-	balance integer,
+	balance numeric(20, 2),
 	foreign key (user_id) references users (id)
 );
 

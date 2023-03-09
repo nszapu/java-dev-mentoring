@@ -3,6 +3,7 @@ package com.epam.core.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -18,5 +19,5 @@ public class EventEntity {
     @Column
     private Date date;
     @Column
-    private int ticketPrice;
+    private BigDecimal ticketPrice;
 }

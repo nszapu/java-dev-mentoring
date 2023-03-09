@@ -7,6 +7,7 @@ import com.epam.core.model.User;
 import com.epam.core.model.UserAccount;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class BookingService implements BookingFacade {
     }
 
     @Override
-    public UserAccount refillUserAccountBalance(User user, int amount) {
+    public UserAccount refillUserAccountBalance(User user, BigDecimal amount) {
         return userAccountService.refillUserAccountBalance(user, amount);
     }
 

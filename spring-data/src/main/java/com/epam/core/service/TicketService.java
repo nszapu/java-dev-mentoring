@@ -15,10 +15,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,14 +52,14 @@ public class TicketService {
     public Ticket bookTicket(long userId, long eventId, int place, Ticket.Category category) {
         EventEntity event = eventRepository.findById(eventId).orElseThrow();
         UserAccountEntity account = userAccountRepository.findByUserId(userId).orElseThrow();
-        if (event.getTicketPrice() > account.getBalance()) {
-            throw new IllegalStateException("The user does not have sufficient valance to book the ticket");
+        if (event.getTicketPrice().compareTo(account.getBalance()) > 0) {
+            throw new IllegalStateException("User does not have sufficient balance to book the ticket");
         }
         if (!ticketRepository.findByEventIdAndPlace(eventId, place).isEmpty()) {
-            throw new IllegalStateException("This place is already booked");
+            throw new IllegalStateException("Place is already booked");
         }
-        int currentBalance = account.getBalance();
-        account.setBalance(currentBalance - event.getTicketPrice());
+        BigDecimal currentBalance = account.getBalance();
+        account.setBalance(currentBalance.subtract(event.getTicketPrice()));
         userAccountRepository.save(account);
         TicketEntity ticketEntity = new TicketEntity();
         ticketEntity.setEvent(event);
@@ -68,21 +70,21 @@ public class TicketService {
     }
 
     public List<Ticket> getBookedTickets(User user, int pageSize, int pageNum) {
-        List<Ticket> result = ticketRepository.findByUserId(user.getId()).stream().map(this::convertTicketEntityToDto).collect(Collectors.toList());
-        log.info("These tickets were returned: " + result);
+        List<Ticket> result = ticketRepository.findByUserId(user.getId(), PageRequest.of(pageNum, pageSize)).stream().map(this::convertTicketEntityToDto).collect(Collectors.toList());
+        log.info("Tickets were returned: {}", result);
         return result;
     }
 
     public List<Ticket> getBookedTickets(Event event, int pageSize, int pageNum) {
-        List<Ticket> result = ticketRepository.findByEventId(event.getId()).stream().map(this::convertTicketEntityToDto).collect(Collectors.toList());
-        log.info("These tickets were returned: " + result);
+        List<Ticket> result = ticketRepository.findByEventId(event.getId(), PageRequest.of(pageNum, pageSize)).stream().map(this::convertTicketEntityToDto).collect(Collectors.toList());
+        log.info("Tickets were returned: {}", result);
         return result;
     }
 
     public boolean cancelTicket(long ticketId) {
-        log.info("The ticket with this id was canceled: " + ticketId);
         ticketRepository.deleteById(ticketId);
-        return ticketRepository.existsById(ticketId);
+        log.info("Ticket with this id was canceled: {}", ticketId);
+        return !ticketRepository.existsById(ticketId);
     }
 
     private Ticket convertTicketEntityToDto(TicketEntity ticketEntity) {

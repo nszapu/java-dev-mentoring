@@ -5,6 +5,7 @@ import com.epam.core.model.Ticket;
 import com.epam.core.model.User;
 import com.epam.core.model.UserAccount;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -145,7 +146,7 @@ public interface BookingFacade {
      * @param amount Refill amount.
      * @return UserAccount which was refilled.
      */
-    UserAccount refillUserAccountBalance(User user, int amount);
+    UserAccount refillUserAccountBalance(User user, BigDecimal amount);
 
     /**
      * Creates new user. User account id should be auto-generated.

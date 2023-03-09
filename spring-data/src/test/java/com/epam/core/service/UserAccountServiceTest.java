@@ -15,11 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -40,47 +41,44 @@ public class UserAccountServiceTest {
         userAccountDto = new UserAccountDto();
         userAccountDto.setId(1);
         userAccountDto.setUserId(1);
-        userAccountDto.setBalance(1000);
+        userAccountDto.setBalance(BigDecimal.valueOf(1000));
         userAccountEntity = new UserAccountEntity();
         userAccountEntity.setId(1);
         userEntity = new UserEntity();
         userEntity.setId(1);
         userAccountEntity.setUser(userEntity);
-        userAccountEntity.setBalance(1000);
-    }
-
-    @Test
-    public void testLoadUserAccountsFromFile() {
-
+        userAccountEntity.setBalance(BigDecimal.valueOf(1000));
     }
 
     @Test
     public void testRefillUserAccountBalance() {
-        when(userAccountRepository.findByUserId(anyLong())).thenReturn(Optional.ofNullable(userAccountEntity));
-        when(userAccountRepository.save(any(UserAccountEntity.class))).thenReturn(userAccountEntity);
+        when(userAccountRepository.findByUserId(1)).thenReturn(Optional.ofNullable(userAccountEntity));
+        when(userAccountRepository.save(userAccountEntity)).thenReturn(userAccountEntity);
         User user = new UserDto();
         user.setId(1);
-        assertEquals(userAccountDto, service.refillUserAccountBalance(user, 1000));
+        assertEquals(userAccountDto, service.refillUserAccountBalance(user, BigDecimal.valueOf(1000)));
     }
 
     @Test
     public void testCreateUserAccount() {
-        when(userAccountRepository.save(any(UserAccountEntity.class))).thenReturn(userAccountEntity);
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(userEntity));
+        when(userAccountRepository.save(userAccountEntity)).thenReturn(userAccountEntity);
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userEntity));
         UserAccount result = service.createUserAccount(userAccountDto);
         assertEquals(userAccountDto, result);
     }
 
     @Test
     public void testUpdateUserAccount() {
-        when(userAccountRepository.save(any(UserAccountEntity.class))).thenReturn(userAccountEntity);
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(userEntity));
+        when(userAccountRepository.save(userAccountEntity)).thenReturn(userAccountEntity);
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userEntity));
         UserAccount result = service.updateUserAccount(userAccountDto);
         assertEquals(userAccountDto, result);
     }
 
     @Test
     public void testDeleteEvent() {
-
+        service.deleteUserAccount(1);
+        verify(userAccountRepository).deleteById(anyLong());
+        verify(userAccountRepository).existsById(anyLong());
     }
 }
