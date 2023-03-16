@@ -126,4 +126,9 @@ public class BookingService implements BookingFacade {
     public boolean deleteUserAccount(long userAccountId) {
         return userAccountService.deleteUserAccount(userAccountId);
     }
+
+    @Override
+    public UserAccount getUserAccountByUserId(long userId) {
+        return userAccountService.getUserAccountByUserId(userId);
+    }
 }

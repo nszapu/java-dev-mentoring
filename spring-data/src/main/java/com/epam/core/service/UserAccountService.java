@@ -51,14 +51,20 @@ public class UserAccountService {
     public UserAccount createUserAccount(UserAccount userAccount) {
         UserAccountEntity userAccountEntity = convertUserAccountDtoToEntity(userAccount);
         UserAccount result = convertUserAccountEntityToDto(userAccountRepository.save(userAccountEntity));
-        log.info("Account was created: " + result);
+        log.info("Account was created: {}", result);
         return result;
     }
 
     public UserAccount updateUserAccount(UserAccount userAccount) {
         UserAccountEntity userAccountEntity = convertUserAccountDtoToEntity(userAccount);
         UserAccount result = convertUserAccountEntityToDto(userAccountRepository.save(userAccountEntity));
-        log.info("Account was updated: " + result);
+        log.info("Account was updated: {}", result);
+        return result;
+    }
+
+    public UserAccount getUserAccountByUserId(long userId) {
+        UserAccount result = convertUserAccountEntityToDto(userAccountRepository.findByUserId(userId).orElseThrow());
+        log.info("Account was found with {} id: {}", userId, result);
         return result;
     }
 

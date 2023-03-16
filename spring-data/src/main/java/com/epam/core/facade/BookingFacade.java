@@ -164,8 +164,15 @@ public interface BookingFacade {
 
     /**
      * Deletes user account by its id.
-     * @param userAccountId User id.
+     * @param userAccountId User account id.
      * @return Flag that shows whether user account has been deleted.
      */
     boolean deleteUserAccount(long userAccountId);
+
+    /**
+     * Gets user account by its userId. UserId is strictly matched.
+     * @param userId User id.
+     * @return User.
+     */
+    UserAccount getUserAccountByUserId(long userId);
 }

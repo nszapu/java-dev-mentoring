@@ -31,8 +31,8 @@ public class UserService {
     private ClassLoader classLoader;
 
     public void loadUsersFromFile() throws IOException {
-        List<UserEntity> users = Arrays.asList(mapper.readValue(new File(classLoader.getResource(usersPath).getFile()), UserEntity[].class));
-        users.forEach(user -> repository.save(user));
+        List<UserDto> users = Arrays.asList(mapper.readValue(new File(classLoader.getResource(usersPath).getFile()), UserDto[].class));
+        users.forEach(user -> repository.save(convertUserDtoToEntity(user)));
     }
 
     public User getUserById(long userId) {

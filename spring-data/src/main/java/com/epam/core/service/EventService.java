@@ -32,8 +32,8 @@ public class EventService {
     private ClassLoader classLoader;
 
     public void loadEventsFromFile() throws IOException {
-        List<EventEntity> events = Arrays.asList(mapper.readValue(new File(classLoader.getResource(eventsPath).getFile()), EventEntity[].class));
-        events.forEach(event -> repository.save(event));
+        List<EventDto> events = Arrays.asList(mapper.readValue(new File(classLoader.getResource(eventsPath).getFile()), EventDto[].class));
+        events.forEach(event -> repository.save(convertEventDtoToEntity(event)));
     }
 
     public Event getEventById(long eventId) {

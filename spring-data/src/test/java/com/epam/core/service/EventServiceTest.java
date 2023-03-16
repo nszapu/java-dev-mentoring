@@ -53,7 +53,6 @@ public class EventServiceTest {
         event = new EventDto();
         event.setId(123);
         event.setTitle("test");
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         event.setDate(dateFormat.parse("2023-01-01"));
         event.setTicketPrice(BigDecimal.valueOf(1000));
         events = new ArrayList<>();

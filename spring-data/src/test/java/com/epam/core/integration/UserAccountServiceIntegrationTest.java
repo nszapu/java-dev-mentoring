@@ -1,8 +1,8 @@
 package com.epam.core.integration;
 
 import com.epam.core.cofig.Config;
-import com.epam.core.repository.EventRepository;
-import com.epam.core.service.EventService;
+import com.epam.core.repository.UserAccountRepository;
+import com.epam.core.service.UserAccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.Assert;
@@ -13,28 +13,30 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@DataJpaTest()
+@DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-@Import({EventService.class, Config.class})
+@Import({UserAccountService.class, Config.class})
 @RunWith(SpringRunner.class)
-public class EventServiceIntegrationTest {
+public class UserAccountServiceIntegrationTest {
 
     @Autowired
-    private EventService service;
+    private UserAccountService service;
     @Autowired
     private ObjectMapper mapper;
     @Autowired
     private ClassLoader classLoader;
     @Autowired
-    private EventRepository repository;
+    private UserAccountRepository repository;
 
     @SneakyThrows
+    @Sql(scripts = {"/sql_scripts/insert_users.sql"})
     @Test
-    public void testLoadEventsFromFile() {
-        service.loadEventsFromFile();
+    public void testLoadUserAccountsFromFile() {
+        service.loadUserAccountsFromFile();
         Assert.assertEquals(3, repository.findAll().spliterator().estimateSize());
     }
 }

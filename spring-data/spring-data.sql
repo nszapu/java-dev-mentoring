@@ -50,4 +50,14 @@ create table user_accounts (
 
 insert into user_accounts (user_id, balance) values (1, 1000);
 
+select * from events;
+select * from users;
+select * from tickets;
 select * from user_accounts;
+
+truncate table events cascade;
+truncate table users;
+truncate table tickets cascade;
+truncate table user_accounts cascade;
+
+select * from pg_stat_activity
