@@ -11,6 +11,7 @@ import com.epam.core.model.User;
 import com.epam.core.model.UserAccount;
 import com.epam.core.service.*;
 import lombok.SneakyThrows;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,33 +37,35 @@ public class BookingIntegrationTest {
     private BookingFacade bookingFacade;
     @Autowired
     private SimpleDateFormat dateFormat;
+    private User user;
+    private UserAccount userAccount;
+    private Event event;
 
     @SneakyThrows
-    @Test
-    public void testBookingProcess() {
+    @Before
+    public void setup() {
 //        given
-        User user = new UserDto();
+        user = new UserDto();
         user.setName("Norbi");
         user.setEmail("norbi@epam.com");
         user = bookingFacade.createUser(user);
 
-        UserAccount userAccount = new UserAccountDto();
+        userAccount = new UserAccountDto();
         userAccount.setBalance(BigDecimal.valueOf(199));
         userAccount.setUserId(user.getId());
         bookingFacade.createUserAccount(userAccount);
 
-        Event event = new EventDto();
+        event = new EventDto();
         event.setTitle("RHCP Concert");
         event.setDate(dateFormat.parse("2023-04-21"));
         event.setTicketPrice(BigDecimal.valueOf(200));
         event = bookingFacade.createEvent(event);
+    }
 
+
+    @Test
+    public void testBookingProcess() {
 //        when
-        try {
-            bookingFacade.bookTicket(user.getId(), event.getId(), 1, Ticket.Category.PREMIUM);
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
         userAccount = bookingFacade.refillUserAccountBalance(user, BigDecimal.valueOf(200));
         bookingFacade.bookTicket(user.getId(), event.getId(), 1, Ticket.Category.PREMIUM);
 
@@ -72,23 +75,20 @@ public class BookingIntegrationTest {
 
     @SneakyThrows
     @Test(expected = IllegalStateException.class)
+    public void bookingWithInsufficientBalance() {
+//        given
+        userAccount.setBalance(BigDecimal.valueOf(199));
+
+//        when
+//
+        bookingFacade.bookTicket(user.getId(), event.getId(), 1, Ticket.Category.PREMIUM);
+    }
+
+    @SneakyThrows
+    @Test(expected = IllegalStateException.class)
     public void testPlaceBooked() {
 //        given
-        User user = new UserDto();
-        user.setName("Norbi");
-        user.setEmail("norbi@epam.com");
-        user = bookingFacade.createUser(user);
-
-        UserAccount userAccount = new UserAccountDto();
         userAccount.setBalance(BigDecimal.valueOf(1000));
-        userAccount.setUserId(user.getId());
-        bookingFacade.createUserAccount(userAccount);
-
-        Event event = new EventDto();
-        event.setTitle("RHCP Concert");
-        event.setDate(dateFormat.parse("2023-04-21"));
-        event.setTicketPrice(BigDecimal.valueOf(200));
-        event = bookingFacade.createEvent(event);
 
 //        when
         bookingFacade.bookTicket(user.getId(), event.getId(), 1, Ticket.Category.PREMIUM);
