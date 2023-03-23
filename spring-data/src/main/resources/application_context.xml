@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    ">
+
+    <context:annotation-config />
+    <context:property-placeholder location="classpath:application.properties" />
+    <bean id="storage" class="com.epam.core.repository.Storage"/>
+    <bean id="eventDao" class="com.epam.core.dao.EventDao">
+        <property name="repository" ref="storage"/>
+        <property name="eventsPath" value="${events.path}"/>
+    </bean>
+    <bean id="ticketDao" class="com.epam.core.dao.TicketDao">
+        <property name="repository" ref="storage"/>
+        <property name="ticketsPath" value="${tickets.path}"/>
+    </bean>
+    <bean id="userDao" class="com.epam.core.dao.UserDao">
+        <property name="repository" ref="storage"/>
+        <property name="usersPath" value="${users.path}"/>
+    </bean>
+    <bean id="storageInitializerService" class="com.epam.core.service.StorageInitializerService">
+        <property name="eventDao" ref="eventDao"/>
+        <property name="ticketDao" ref="ticketDao"/>
+        <property name="userDao" ref="userDao"/>
+    </bean>
+    <bean id="eventService" class="com.epam.core.service.EventService">
+        <constructor-arg ref="eventDao"/>
+    </bean>
+    <bean id="ticketService" class="com.epam.core.service.TicketService">
+        <constructor-arg ref="ticketDao"/>
+    </bean>
+    <bean id="userService" class="com.epam.core.service.UserService">
+        <constructor-arg ref="userDao"/>
+    </bean>
+    <bean id="bookingService" class="com.epam.core.service.BookingService">
+        <constructor-arg ref="eventService"/>
+        <constructor-arg ref="ticketService"/>
+        <constructor-arg ref="userService"/>
+    </bean>
+</beans>
