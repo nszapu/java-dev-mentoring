@@ -2,7 +2,7 @@ package com.epam.crud.controller;
 
 import com.epam.crud.model.User;
 import com.epam.crud.service.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService service;
+    @Autowired
+    private UserService service;
 
     @GetMapping
     public List<User> getUsers() {
