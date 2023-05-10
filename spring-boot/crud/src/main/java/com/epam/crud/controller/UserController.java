@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,11 +23,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable long id) {
-        try {
-            return new ResponseEntity<>(service.getUser(id), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(service.getUser(id), HttpStatus.OK);
     }
 
     @PostMapping
@@ -38,21 +33,13 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<User> updateUser(@RequestBody User user) {
-        try {
-            return new ResponseEntity<>(service.save(user), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(service.save(user), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable long id) {
-        try {
-            service.getUser(id);
-            service.delete(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        service.getUser(id);
+        service.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

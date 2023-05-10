@@ -4,7 +4,6 @@ import com.epam.crud.model.AuthenticationRequest;
 import com.epam.crud.model.RegisterRequest;
 import com.epam.crud.model.Token;
 import com.epam.crud.service.AuthenticationService;
-import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +21,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<Token> register(@RequestBody RegisterRequest request) {
-        try {
-            return new ResponseEntity<>(service.register(request), HttpStatus.CREATED);
-        } catch (EntityExistsException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(service.register(request), HttpStatus.CREATED);
     }
 
     @PostMapping("/authenticate")
