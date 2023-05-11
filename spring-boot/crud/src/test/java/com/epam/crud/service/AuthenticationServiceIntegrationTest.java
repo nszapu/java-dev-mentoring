@@ -3,42 +3,62 @@ package com.epam.crud.service;
 import com.epam.crud.config.Config;
 import com.epam.crud.model.RegisterRequest;
 import com.epam.crud.model.Token;
-import com.epam.crud.security.JwtToUserConverter;
-import com.epam.crud.security.KeyUtils;
 import com.epam.crud.security.TokenGenerator;
-import com.epam.crud.security.WebSecurity;
+import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Import({AuthenticationService.class,
-        UserManagerService.class,
-        TokenGenerator.class,
-        WebSecurity.class,
-        JwtToUserConverter.class,
-        KeyUtils.class,
-        Config.class})
+@Import({AuthenticationService.class, Config.class, UserManagerService.class})
 public class AuthenticationServiceIntegrationTest {
 
     @Autowired
     private AuthenticationService service;
+    @Autowired
+    private UserDetailsManager userDetailsManager;
+    @MockBean
+    private TokenGenerator tokenGenerator;
 
     @Test
     public void register() {
+//        given
         RegisterRequest request = new RegisterRequest();
         request.setName("lele");
-        request.setEmail("lele@emial.com");
+        request.setEmail("lele@email.com");
         request.setPassword("password");
-
+        Token expectedToken = new Token();
+        expectedToken.setUserId(1);
+        expectedToken.setAccessToken("test1");
+        expectedToken.setRefreshToken("test2");
+//        when
+        when(tokenGenerator.createToken(any(Authentication.class))).thenReturn(expectedToken);
         Token token = service.register(request);
+//        then
+        assertEquals(expectedToken, token);
+    }
 
-        assertEquals(0, token.getAccessToken().length());
-        assertEquals(0, token.getRefreshToken().length());
+    @Test
+    public void registerEmailExists() {
+//        given
+        RegisterRequest request = new RegisterRequest();
+        request.setName("lele");
+        request.setEmail("lala@email.com");
+        request.setPassword("password");
+//        when
+        Exception exception = assertThrows(EntityExistsException.class, () -> service.register(request));
+//        then
+        assertEquals("email is used", exception.getMessage());
     }
 }

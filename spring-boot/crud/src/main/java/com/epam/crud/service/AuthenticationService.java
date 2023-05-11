@@ -37,13 +37,13 @@ public class AuthenticationService {
         }
         userDetailsManager.createUser(user);
         Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(user, user.getPassword(), Collections.emptyList());
-        log.info("User is registered with {} email.", user.getEmail());
+        log.info("User is registered with email: {}.", user.getEmail());
         return tokenGenerator.createToken(authentication);
     }
 
     public Token authenticate(AuthenticationRequest request) {
         Authentication authentication = daoAuthenticationProvider.authenticate(UsernamePasswordAuthenticationToken.unauthenticated(request.getEmail(), request.getPassword()));
-        log.info("User is authenticated with {} email.", request.getEmail());
+        log.info("User is authenticated with email: {}.", request.getEmail());
         return tokenGenerator.createToken(authentication);
     }
 }

@@ -17,7 +17,7 @@ public class UserService {
 
     public User getUser(long id) {
         User user = repository.findById(id).orElseThrow();
-        log.info("User was returned with {} email.", user.getEmail());
+        log.info("User was returned with email: {}.", user.getEmail());
         return user;
     }
 
@@ -29,12 +29,12 @@ public class UserService {
 
     public User save(User user) {
         User savedUser = repository.save(user);
-        log.info("User was saved with {} email", savedUser.getEmail());
+        log.info("User was saved with email: {}.", savedUser.getEmail());
         return savedUser;
     }
 
     public void delete(long id) {
         repository.deleteById(id);
-        log.info("User was deleted with {} id", id);
+        log.info("User was deleted with id: {}.", id);
     }
 }

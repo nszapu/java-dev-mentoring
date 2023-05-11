@@ -112,15 +112,15 @@ public class UserControllerTest {
     public void updateUser() {
         when(service.save(user1)).thenReturn(user1);
         String expectedJsonString = "{\"id\":1,\"name\":\"lala\",\"email\":\"lala@email.com\",\"password\":\"password\",\"enabled\":true,\"authorities\":[],\"username\":\"lala@email.com\",\"accountNonLocked\":true,\"accountNonExpired\":true,\"credentialsNonExpired\":true}";
-        String body = "{\"name\":\"lala\",\"email\":\"lala@email.com\"}";
+        String body = "{\"id\":1,\"name\":\"lala\",\"email\":\"lala@email.com\"}";
         mvc.perform(put("/api/users")
                         .with(jwt())
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk());
-//                .andExpect(content().json(expectedJsonString));
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJsonString));
     }
 
     @SneakyThrows
