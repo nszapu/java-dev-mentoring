@@ -119,8 +119,8 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk());
-//                .andExpect(content().json(expectedJsonString));
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJsonString));
     }
 
     @SneakyThrows
