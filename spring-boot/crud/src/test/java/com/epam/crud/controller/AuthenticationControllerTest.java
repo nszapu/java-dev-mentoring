@@ -74,11 +74,12 @@ public class AuthenticationControllerTest {
         request.setEmail("lala@email.com");
         request.setPassword("password");
         when(service.register(request)).thenThrow(new EntityExistsException());
-        String body = "{\n" +
-                "    \"name\": \"lala\",\n" +
-                "    \"email\": \"lala@email.com\",\n" +
-                "    \"password\": \"password\"\n" +
-                "}";
+        String body = """
+                {
+                    "name": "lala",
+                    "email": "lala@email.com",
+                    "password": "password"
+                }""";
         String expected = "{\"statusCode\":400,\"message\":null,\"description\":\"uri=/api/auth/register\"}";
 //        when
         mvc.perform(post("/api/auth/register")
@@ -104,15 +105,17 @@ public class AuthenticationControllerTest {
         token.setAccessToken("test1");
         token.setRefreshToken("test2");
         when(service.authenticate(request)).thenReturn(token);
-        String body = "{\n" +
-                "    \"email\": \"lala@email.com\",\n" +
-                "    \"password\": \"password\"\n" +
-                "}";
-        String expected = "{\n" +
-                "    \"userId\": 1,\n" +
-                "    \"accessToken\": \"test1\",\n" +
-                "    \"refreshToken\": \"test2\"\n" +
-                "}";
+        String body = """
+                {
+                    "email": "lala@email.com",
+                    "password": "password"
+                }""";
+        String expected = """
+                {
+                    "userId": 1,
+                    "accessToken": "test1",
+                    "refreshToken": "test2"
+                }""";
 //        when
         mvc.perform(post("/api/auth/authenticate")
                         .with(jwt())
