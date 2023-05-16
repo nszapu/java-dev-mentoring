@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
@@ -17,21 +17,21 @@ public class ControllerExceptionHandler {
     public ResponseEntity<ErrorMessage> resourceNotFoundException(NoSuchElementException exception, WebRequest request) {
         ErrorMessage message = new ErrorMessage();
         message.setStatusCode(HttpStatus.NOT_FOUND.value());
-        message.setTimestamp(new Date());
+        message.setTimestamp(LocalDateTime.now());
         message.setMessage(exception.getMessage());
         message.setDescription(request.getDescription(false));
 
-        return new ResponseEntity<ErrorMessage>(message, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<ErrorMessage> entityExistsException(EntityExistsException exception, WebRequest request) {
         ErrorMessage message = new ErrorMessage();
         message.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        message.setTimestamp(new Date());
+        message.setTimestamp(LocalDateTime.now());
         message.setMessage(exception.getMessage());
         message.setDescription(request.getDescription(false));
 
-        return new ResponseEntity<ErrorMessage>(message, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }

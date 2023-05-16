@@ -2,12 +2,12 @@ package com.epam.crud.exception;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 public class ErrorMessage {
     private int statusCode;
-    private Date timestamp;
+    private LocalDateTime timestamp;
     private String message;
     private String description;
 }

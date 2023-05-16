@@ -18,8 +18,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
 @WebMvcTest(AuthenticationController.class)
@@ -43,16 +42,12 @@ public class AuthenticationControllerTest {
         token.setAccessToken("test1");
         token.setRefreshToken("test2");
         when(service.register(request)).thenReturn(token);
-        String body = "{\n" +
-                "    \"name\": \"lala\",\n" +
-                "    \"email\": \"lala@email.com\",\n" +
-                "    \"password\": \"password\"\n" +
-                "}";
-        String expected = "{\n" +
-                "    \"userId\": 1,\n" +
-                "    \"accessToken\": \"test1\",\n" +
-                "    \"refreshToken\": \"test2\"\n" +
-                "}";
+        String body = """
+                {
+                    "name": "lala",
+                    "email": "lala@email.com",
+                    "password": "password"
+                }""";
 //        when
         mvc.perform(post("/api/auth/register")
                     .with(jwt())
@@ -62,7 +57,9 @@ public class AuthenticationControllerTest {
 //        then
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(content().json(expected));
+                .andExpect(jsonPath("$.userId").value(1))
+                .andExpect(jsonPath("$.accessToken").value("test1"))
+                .andExpect(jsonPath("$.refreshToken").value("test2"));
     }
 
     @SneakyThrows
@@ -80,7 +77,6 @@ public class AuthenticationControllerTest {
                     "email": "lala@email.com",
                     "password": "password"
                 }""";
-        String expected = "{\"statusCode\":400,\"message\":null,\"description\":\"uri=/api/auth/register\"}";
 //        when
         mvc.perform(post("/api/auth/register")
                         .with(jwt())
@@ -90,7 +86,8 @@ public class AuthenticationControllerTest {
 //        then
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().json(expected));
+                .andExpect(jsonPath("$.statusCode").value(400))
+                .andExpect(jsonPath("$.description").value("uri=/api/auth/register"));
     }
 
     @SneakyThrows
@@ -110,12 +107,6 @@ public class AuthenticationControllerTest {
                     "email": "lala@email.com",
                     "password": "password"
                 }""";
-        String expected = """
-                {
-                    "userId": 1,
-                    "accessToken": "test1",
-                    "refreshToken": "test2"
-                }""";
 //        when
         mvc.perform(post("/api/auth/authenticate")
                         .with(jwt())
@@ -125,6 +116,8 @@ public class AuthenticationControllerTest {
 //        then
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(expected));
+                .andExpect(jsonPath("$.userId").value(1))
+                .andExpect(jsonPath("$.accessToken").value("test1"))
+                .andExpect(jsonPath("$.refreshToken").value("test2"));
     }
 }

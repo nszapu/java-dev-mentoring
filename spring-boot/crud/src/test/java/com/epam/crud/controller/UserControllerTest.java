@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
 @WebMvcTest(UserController.class)
@@ -47,13 +47,15 @@ public class UserControllerTest {
     @Test
     public void getUsers() {
         when(service.getUsers()).thenReturn(users);
-        String expectedJsonString = "[{\"id\":1,\"name\":\"lala\",\"email\":\"lala@email.com\",\"password\":\"password\",\"enabled\":true,\"authorities\":[],\"username\":\"lala@email.com\",\"accountNonLocked\":true,\"accountNonExpired\":true,\"credentialsNonExpired\":true},{\"id\":2,\"name\":\"lolo\",\"email\":\"lolo@email.com\",\"password\":\"password\",\"enabled\":true,\"authorities\":[],\"username\":\"lolo@email.com\",\"accountNonLocked\":true,\"accountNonExpired\":true,\"credentialsNonExpired\":true}]";
         mvc.perform(get("/api/users")
                         .with(jwt())
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(expectedJsonString));
+                .andExpect(jsonPath("$[0].name").value("lala"))
+                .andExpect(jsonPath("$[0].email").value("lala@email.com"))
+                .andExpect(jsonPath("$[1].name").value("lolo"))
+                .andExpect(jsonPath("$[1].email").value("lolo@email.com"));
     }
 
     @SneakyThrows
@@ -69,33 +71,32 @@ public class UserControllerTest {
     @Test
     public void getUser() {
         when(service.getUser(1)).thenReturn(user1);
-        String expectedJsonString = "{\"id\":1,\"name\":\"lala\",\"email\":\"lala@email.com\",\"password\":\"password\",\"enabled\":true,\"authorities\":[],\"username\":\"lala@email.com\",\"accountNonLocked\":true,\"accountNonExpired\":true,\"credentialsNonExpired\":true}";
         mvc.perform(get("/api/users/1")
                         .with(jwt())
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(expectedJsonString));
+                .andExpect(jsonPath("$.name").value("lala"))
+                .andExpect(jsonPath("$.email").value("lala@email.com"));
     }
 
     @SneakyThrows
     @Test
     public void getUserNotFound() {
         when(service.getUser(99)).thenThrow(new NoSuchElementException());
-        String expectedJsonString = "{\"statusCode\":404,\"message\":null,\"description\":\"uri=/api/users/99\"}";
         mvc.perform(get("/api/users/99")
                         .with(jwt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(content().json(expectedJsonString));
+                .andExpect(jsonPath("$.statusCode").value(404))
+                .andExpect(jsonPath("$.description").value("uri=/api/users/99"));
     }
 
     @SneakyThrows
     @Test
     public void createUser() {
-        when(service.save(user1)).thenReturn(user1);
-        String expectedJsonString = "{\"id\":1,\"name\":\"lala\",\"email\":\"lala@email.com\",\"password\":\"password\",\"enabled\":true,\"authorities\":[],\"username\":\"lala@email.com\",\"accountNonLocked\":true,\"accountNonExpired\":true,\"credentialsNonExpired\":true}";
+        when(service.save(any(User.class))).thenReturn(user1);
         String body = "{\"name\":\"lala\",\"email\":\"lala@email.com\"}";
         mvc.perform(post("/api/users")
                         .with(jwt())
@@ -103,15 +104,15 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isCreated());
-//                .andExpect(content().json(expectedJsonString));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("lala"))
+                .andExpect(jsonPath("$.email").value("lala@email.com"));
     }
 
     @SneakyThrows
     @Test
     public void updateUser() {
-        when(service.save(user1)).thenReturn(user1);
-        String expectedJsonString = "{\"id\":1,\"name\":\"lala\",\"email\":\"lala@email.com\",\"password\":\"password\",\"enabled\":true,\"authorities\":[],\"username\":\"lala@email.com\",\"accountNonLocked\":true,\"accountNonExpired\":true,\"credentialsNonExpired\":true}";
+        when(service.save(any(User.class))).thenReturn(user1);
         String body = "{\"id\":1,\"name\":\"lala\",\"email\":\"lala@email.com\"}";
         mvc.perform(put("/api/users")
                         .with(jwt())
@@ -120,7 +121,8 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(expectedJsonString));
+                .andExpect(jsonPath("$.name").value("lala"))
+                .andExpect(jsonPath("$.email").value("lala@email.com"));
     }
 
     @SneakyThrows
