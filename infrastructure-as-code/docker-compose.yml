@@ -1,0 +1,12 @@
+services:
+  spring-petclinic:
+    container_name: spring-petclinic-app
+    build:
+      dockerfile: Dockerfile
+    image: spring-petclinic:latest
+    volumes:
+      - type: bind
+        source: application.properties
+        target: /home/newuser/config/application.properties
+    ports:
+      - "8080:8080"
