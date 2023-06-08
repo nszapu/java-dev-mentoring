@@ -6,7 +6,7 @@ services:
     image: spring-petclinic:latest
     volumes:
       - type: bind
-        source: application.properties
+        source: ./application.properties
         target: /home/newuser/config/application.properties
     ports:
       - "8080:8080"
