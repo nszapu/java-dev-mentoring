@@ -1,10 +1,9 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: spring-petclinic-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: spring-petclinic-app
@@ -14,11 +13,19 @@ spec:
         app: spring-petclinic-app
     spec:
       containers:
-        - name: spring-petclinic-app
-          image: minikube:spring-petclinic
-          imagePullPolicy: Never
-          ports:
-            - containerPort: 8080
+      - name: spring-petclinic-app
+        image: spring-petclinic:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: mnt
+            mountPath: /home/newuser/config/application.properties
+            subPath: application.properties
+      volumes:
+        - name: mnt
+          configMap:
+            name: spring-petclinic-config
 ---
 apiVersion: v1
 kind: Service
@@ -27,8 +34,9 @@ metadata:
 spec:
   selector:
     app: spring-petclinic-app
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
   type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+    nodePort: 30000
