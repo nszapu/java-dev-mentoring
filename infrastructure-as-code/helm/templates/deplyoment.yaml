@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-petclinic-app-helm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-petclinic-app-helm
+  template:
+    metadata:
+      labels:
+        app: spring-petclinic-app-helm
+    spec:
+      containers:
+        - name: spring-petclinic-app-helm
+          image: spring-petclinic:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: mnt
+              mountPath: /home/newuser/config/application.properties
+              subPath: application.properties
+      volumes:
+        - name: mnt
+          configMap:
+            name: spring-petclinic-configmap
