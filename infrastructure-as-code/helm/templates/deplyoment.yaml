@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-petclinic-app-helm
+  name: {{ .Values.deploymentName }}
 spec:
-  replicas: 2
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: spring-petclinic-app-helm
+      app: {{ .Values.deploymentName }}
   template:
     metadata:
       labels:
-        app: spring-petclinic-app-helm
+        app: {{ .Values.deploymentName }}
     spec:
       containers:
-        - name: spring-petclinic-app-helm
-          image: spring-petclinic:latest
+        - name: {{ .Values.deploymentName }}
+          image: {{ .Values.image.repository }}:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
@@ -25,4 +25,4 @@ spec:
       volumes:
         - name: mnt
           configMap:
-            name: spring-petclinic-configmap
+            name: {{ .Values.configmapName }}

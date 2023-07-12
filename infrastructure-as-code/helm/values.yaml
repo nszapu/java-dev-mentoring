@@ -1,7 +1,11 @@
-replicaCount: 1
+replicaCount: 2
 image:
   repository: spring-petclinic
   pullPolicy: IfNotPresent
+
+deploymentName: spring-petclinic-app-helm
+serviceName: spring-petclinic-service-helm
+configmapName: spring-petclinic-configmap
 
 imagePullSecrets: []
 nameOverride: ""
@@ -21,7 +25,7 @@ securityContext: {}
 service:
   type: LoadBalancer
   port: 8080
-  nodePort: 30000
+  nodePort: 30001
 
 ingress:
   enabled: false
