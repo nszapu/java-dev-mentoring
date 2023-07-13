@@ -1,0 +1,50 @@
+replicaCount: 2
+image:
+  repository: spring-petclinic
+  pullPolicy: IfNotPresent
+
+deploymentName: spring-petclinic-app-helm
+serviceName: spring-petclinic-service-helm
+configmapName: spring-petclinic-configmap
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: LoadBalancer
+  port: 8080
+  nodePort: 30001
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
