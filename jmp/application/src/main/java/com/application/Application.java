@@ -1,5 +1,6 @@
 package com.application;
 
+import com.exception.SubscriptionNotFoundException;
 import com.jmp.bank.api.Bank;
 import com.jmp.dto.BankCard;
 import com.jmp.dto.BankCardType;
@@ -17,10 +18,15 @@ public class Application {
                 new User("Dan", "Burn", LocalDate.of(1992, 5, 9)),
                 BankCardType.CREDIT
         );
-
-        Iterable<Service> services = ServiceLoader.load(Service.class);
-        Service service = services.iterator().next();
+        Service service = ServiceLoader.load(Service.class).findFirst().orElseThrow();
         service.subscribe(creditCard);
-        System.out.println(service.getSubscriptionByBankCardNumber(creditCard.getNumber()).orElseThrow().getBankcard());
+        try {
+            System.out.println(service.getSubscriptionByBankCardNumber(creditCard.getNumber()).orElseThrow().getBankcard());
+        } catch (SubscriptionNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(service.getAverageUserAge());
+        service.validateIsPayable();
+        System.out.println(service.getAllSubscriptionsByCondition(subscription -> subscription.getStartDate().equals(LocalDate.now())));
     }
 }

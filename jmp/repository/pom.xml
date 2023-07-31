@@ -9,23 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>jmp-service-api</artifactId>
+    <artifactId>com.repository</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.jmp</groupId>
             <artifactId>com.jmp.dto</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jmp</groupId>
-            <artifactId>com.jmp.bank.api</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jmp</groupId>
-            <artifactId>com.exception</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>

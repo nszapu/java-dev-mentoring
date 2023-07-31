@@ -37,6 +37,8 @@
         <module>jmp-cloud-service-impl</module>
         <module>jmp-dto</module>
         <module>application</module>
+        <module>repository</module>
+        <module>exception</module>
     </modules>
 
     <dependencies>
