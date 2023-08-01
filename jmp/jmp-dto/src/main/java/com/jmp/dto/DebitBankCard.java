@@ -1,7 +1,7 @@
 package com.jmp.dto;
 
 public class DebitBankCard extends BankCard {
-    public DebitBankCard(User user) {
-        super(user);
+    public DebitBankCard(String number, User user) {
+        super(number, user);
     }
 }

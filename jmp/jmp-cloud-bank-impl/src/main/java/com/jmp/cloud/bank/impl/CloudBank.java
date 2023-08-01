@@ -2,37 +2,36 @@ package com.jmp.cloud.bank.impl;
 
 import com.jmp.bank.api.Bank;
 import com.jmp.dto.*;
-import com.repository.UserRepository;
 
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.function.Function;
+import java.util.Random;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class CloudBank implements Bank {
 
-    private UserRepository userRepository;
-
-    public CloudBank() {
-        userRepository = ServiceLoader.load(UserRepository.class).findFirst().orElseThrow();
-    }
+    private static final int BANK_CARD_NUMBER_LENGTH = 16;
+    private static final int BOUND = 10;
+    private static final Random random = new Random();
 
     @Override
     public BankCard createBankCard(User user, BankCardType bankCardType) {
         switch (bankCardType) {
             case CREDIT -> {
-                userRepository.save(user);
-                return ((Function<User, CreditBankCard>) CreditBankCard::new).apply(user);
+                return createNewBankCard(CreditBankCard::new, user);
             }
             case DEBIT -> {
-                userRepository.save(user);
-                return ((Function<User, DebitBankCard>) DebitBankCard::new).apply(user);
+                return createNewBankCard(DebitBankCard::new, user);
             }
         }
         return null;
     }
 
-    @Override
-    public List<User> getAll() {
-        return userRepository.getAll();
+    private static BankCard createNewBankCard(BiFunction<String, User, BankCard> function, User user) {
+        return function.apply(generateBankCardNumber(), user);
+    }
+
+    private static String generateBankCardNumber() {
+        var randomNumbers = random.ints(0, BOUND).limit(BANK_CARD_NUMBER_LENGTH).boxed().toList();
+        return randomNumbers.stream().map(Object::toString).collect(Collectors.joining());
     }
 }

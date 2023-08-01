@@ -1,6 +1,6 @@
 package com.exception;
 
-public class SubscriptionNotFoundException extends Exception {
+public class SubscriptionNotFoundException extends RuntimeException {
 
     public SubscriptionNotFoundException(String errorMessage) {
         super(errorMessage);
