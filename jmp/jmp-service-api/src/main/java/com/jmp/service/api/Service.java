@@ -15,11 +15,16 @@ public interface Service {
     int PAYABLE_AGE = 18;
 
     void subscribe(BankCard bankCard);
+
     Subscription getSubscriptionByBankCardNumber(String cardNumber) throws SubscriptionNotFoundException;
+
     List<User> getAllUsers();
+
     double getAverageUserAge();
+
     static boolean isPayableUser(User user) {
         return Period.between(user.getBirthday(), LocalDate.now()).getYears() >= PAYABLE_AGE;
     }
+
     List<Subscription> getAllSubscriptionsByCondition(Predicate<Subscription> condition);
 }
