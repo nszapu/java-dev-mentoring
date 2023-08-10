@@ -1,4 +1,4 @@
-package com.epam;
+package com.epam.event.service.dto;
 
 import jakarta.persistence.*;
 import lombok.Data;

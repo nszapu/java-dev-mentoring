@@ -1,11 +1,16 @@
-package com.epam;
+package com.epam.event.service.impl;
 
+import com.epam.event.repository.EventRepository;
+import com.epam.event.service.api.EventService;
+import com.epam.event.service.dto.Event;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class EventServiceImpl implements EventService {
 
     @Autowired
