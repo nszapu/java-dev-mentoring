@@ -1,17 +1,19 @@
-package com.epam.event.service.dto;
+package com.epam.event.service.rest.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Value;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event {
+public class EventResponse extends RepresentationModel<EventResponse> {
 
-    private Long id;
+    private long id;
     private String title;
     private String place;
     private String speaker;

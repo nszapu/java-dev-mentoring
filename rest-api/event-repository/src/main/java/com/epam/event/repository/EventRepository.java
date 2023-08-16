@@ -1,13 +1,13 @@
 package com.epam.event.repository;
 
-import com.epam.event.service.dto.Event;
+import com.epam.event.dao.model.EventEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long> {
+public interface EventRepository extends JpaRepository<EventEntity, Long> {
 
-    List<Event> findAllByTitle(String title);
+    List<EventEntity> findAllByTitle(String title);
 }

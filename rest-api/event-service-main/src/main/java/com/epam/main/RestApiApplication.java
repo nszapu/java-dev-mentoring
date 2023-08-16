@@ -10,7 +10,10 @@ import org.springframework.context.annotation.ComponentScan;
         "com.epam.event.service.api",
         "com.epam.event.service.dto",
         "com.epam.event.service.impl",
-        "com.epam.event.service.rest"
+        "com.epam.event.service.rest",
+        "com.epam.main.config",
+        "com.epam.event.service.rest.util",
+        "com.epam.event.service.impl.util"
 })
 @SpringBootApplication
 public class RestApiApplication {

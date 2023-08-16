@@ -1,20 +1,32 @@
-package com.epam.event.service.dto;
+package com.epam.event.dao.model;
 
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Data
+@Entity
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event {
+@Table(name = "events")
+public class EventEntity {
 
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String title;
+    @Column
     private String place;
+    @Column
     private String speaker;
+    @Column
     private String eventType;
+    @Column
     private LocalDate dateTime;
 }

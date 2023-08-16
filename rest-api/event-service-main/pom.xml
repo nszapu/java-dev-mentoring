@@ -17,4 +17,46 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>event-repository</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>event-service-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>event-service-dto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>event-service-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>event-service-rest</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.epam.main.RestApiApplication</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
