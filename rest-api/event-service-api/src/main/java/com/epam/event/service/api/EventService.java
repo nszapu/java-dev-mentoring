@@ -8,7 +8,7 @@ public interface EventService {
 
     Event createEvent(Event event);
 
-    Event updateEvent(Event event);
+    Event updateEvent(Event event, Long id);
 
     Event getEvent(Long id);
 

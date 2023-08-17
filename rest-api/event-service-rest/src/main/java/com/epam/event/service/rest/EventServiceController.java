@@ -3,22 +3,23 @@ package com.epam.event.service.rest;
 import com.epam.event.service.api.EventService;
 import com.epam.event.service.dto.Event;
 import com.epam.event.service.rest.model.EventResponse;
-import com.epam.event.service.rest.util.EventToEventResponseConverter;
+import com.epam.event.service.rest.model.EventResponseAssembler;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-import static com.epam.event.service.rest.util.EventToEventResponseConverter.convertEventToEventResponse;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/events")
@@ -26,59 +27,46 @@ public class EventServiceController {
 
     private static final String EVENTS = "events";
     private EventService service;
+    private EventResponseAssembler assembler;
 
-    public EventServiceController(EventService eventService) {
+    public EventServiceController(EventService eventService, EventResponseAssembler assembler) {
         this.service = eventService;
+        this.assembler = assembler;
     }
 
     @Operation(summary = "Get all events")
     @ApiResponse(
             responseCode = "200",
             description = "Returned all events",
-            content = @Content(mediaType = "application/json")
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = EventResponse.class))
+            )
     )
     @GetMapping
-    public ResponseEntity<List<EventResponse>> getEvents() {
-        List<EventResponse> eventsResponse = service.getAllEvents().stream()
-                .map(EventToEventResponseConverter::convertEventToEventResponse)
-                .map(event -> event.add(linkTo(methodOn(this.getClass()).getEventById(event.getId())).withSelfRel()))
-                .toList();
-        return ResponseEntity.ok(eventsResponse);
-    }
-
-    @Operation(summary = "Get all events by title")
-    @ApiResponse(
-            responseCode = "200",
-            description = "Returned all events with specific title",
-            content = @Content(mediaType = "application/json")
-    )
-    @GetMapping("/{title}")
-    public ResponseEntity<List<EventResponse>> getEventsByTitle(
-            @Parameter(description = "title of the events to be searched")
-            @PathVariable String title
-    ) {
-        List<EventResponse> eventResponses = service.getAllEventsByTitle(title).stream()
-                .map(EventToEventResponseConverter::convertEventToEventResponse)
-                .map(event -> event.add(linkTo(methodOn(this.getClass()).getEventById(event.getId())).withSelfRel()))
-                .toList();
-        return ResponseEntity.ok(eventResponses);
+    public ResponseEntity<CollectionModel<EventResponse>> getEvents(@RequestParam Optional<String> title) {
+        ResponseEntity<CollectionModel<EventResponse>> response = ResponseEntity.ok(assembler.toCollectionModel(service.getAllEvents()));
+        if (title.isEmpty()) {
+            return response;
+        }
+        return ResponseEntity.ok(assembler.toCollectionModel(service.getAllEvents()
+                .stream().filter(event -> Objects.equals(event.getTitle(), title.get())).toList()));
     }
 
     @Operation(summary = "Get event by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Event found",
-            content = { @Content(mediaType = "application/json",
-            schema = @Schema(implementation = EventResponse.class)) }),
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = EventResponse.class)
+                    )}),
             @ApiResponse(responseCode = "404", description = "Event not found", content = @Content)
     })
-    @GetMapping("/event/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<EventResponse> getEventById(
             @Parameter(description = "id of event to be searched")
             @PathVariable long id
     ) {
-        EventResponse eventResponse = convertEventToEventResponse(service.getEvent(id))
-                .add(linkTo(methodOn(this.getClass()).getEvents()).withRel(EVENTS));
-        return ResponseEntity.ok(eventResponse);
+        return ResponseEntity.ok(assembler.toModel(service.getEvent(id)));
     }
 
     @Operation(summary = "Create event")
@@ -92,27 +80,24 @@ public class EventServiceController {
             @Parameter(description = "event to be created")
             @RequestBody Event event
     ) {
-        EventResponse eventResponse = convertEventToEventResponse(service.createEvent(event))
-                .add(linkTo(methodOn(this.getClass()).getEvents()).withRel(EVENTS));
-        return new ResponseEntity<>(eventResponse, HttpStatus.CREATED);
+        ;
+        return new ResponseEntity<>(assembler.toModel(service.createEvent(event)), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update event")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Event updated",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = EventResponse.class)) }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EventResponse.class))}),
             @ApiResponse(responseCode = "404", description = "Event not found", content = @Content)
     })
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<EventResponse> updateEvent(
             @Parameter(description = "event to be updated")
-            @RequestBody Event event
+            @RequestBody Event event,
+            @PathVariable long id
     ) {
-        service.getEvent(event.getId());
-        EventResponse eventResponse = convertEventToEventResponse(service.updateEvent(event))
-                .add(linkTo(methodOn(this.getClass()).getEvents()).withRel(EVENTS));
-        return ResponseEntity.ok(eventResponse);
+        return ResponseEntity.ok(assembler.toModel(service.updateEvent(event, id)));
     }
 
     @Operation(summary = "Delete event")
@@ -125,7 +110,6 @@ public class EventServiceController {
             @Parameter(description = "id of event to be deleted")
             @PathVariable long id
     ) {
-        service.getEvent(id);
         service.deleteEvent(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
