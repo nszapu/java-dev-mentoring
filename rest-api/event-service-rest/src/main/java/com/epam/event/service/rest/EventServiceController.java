@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -36,18 +36,18 @@ public class EventServiceController {
     @ApiResponse(
             responseCode = "200",
             description = "Returned all events",
-            content = @Content(mediaType = "application/json",
+            content = @Content(
+                    mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = EventResponse.class))
             )
     )
     @GetMapping
-    public ResponseEntity<CollectionModel<EventResponse>> getEvents(@RequestParam Optional<String> title) {
-        ResponseEntity<CollectionModel<EventResponse>> response = ResponseEntity.ok(assembler.toCollectionModel(service.getAllEvents()));
-        if (title.isEmpty()) {
-            return response;
-        }
-        return ResponseEntity.ok(assembler.toCollectionModel(service.getAllEvents()
-                .stream().filter(event -> Objects.equals(event.getTitle(), title.get())).toList()));
+    public ResponseEntity<CollectionModel<EventResponse>> getEvents(
+            @Parameter(description = "title of events to be searched")
+            @RequestParam Optional<String> title
+    ) {
+        List<Event> events = title.map(s -> service.getAllEventsByTitle(s)).orElseGet(() -> service.getAllEvents());
+        return ResponseEntity.ok(assembler.toCollectionModel(events));
     }
 
     @Operation(summary = "Get event by id")
@@ -93,6 +93,7 @@ public class EventServiceController {
     public ResponseEntity<EventResponse> updateEvent(
             @Parameter(description = "event to be updated")
             @RequestBody Event event,
+            @Parameter(description = "id of event to be updated")
             @PathVariable long id
     ) {
         return ResponseEntity.ok(assembler.toModel(service.updateEvent(event, id)));
