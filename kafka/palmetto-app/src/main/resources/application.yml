@@ -1,0 +1,12 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      value-serializer: io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer
+      properties:
+        "[schema.registry.url]": http://localhost:8081
+server:
+  port: 8084
+kafka:
+  topic:
+    to-produce-to: notification
