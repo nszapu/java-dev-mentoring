@@ -10,26 +10,26 @@ import org.client.model.OrderRequest;
 import org.client.model.OrderResponse;
 import org.client.model.Status;
 import org.client.util.OrderConverter;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Slf4j
 @Service
 public class OrderService {
 
-    private OrderRepository orderRepository;
-    private CustomerRepository customerRepository;
-    private OrderConverter converter;
-    private KafkaTemplate<String, OrderMessage> kafkaTemplate;
+    private final OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
+    private final OrderConverter converter;
+    private final MessageProducerService messageProducerService;
 
-    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, OrderConverter converter, KafkaTemplate<String, OrderMessage> kafkaTemplate) {
+    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, OrderConverter converter, MessageProducerService messageProducerService) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.converter = converter;
-        this.kafkaTemplate = kafkaTemplate;
+        this.messageProducerService = messageProducerService;
     }
 
     public OrderResponse createOrder(OrderRequest orderRequest) {
@@ -44,23 +44,23 @@ public class OrderService {
                 .status(Status.valueOf(orderEntity.getStatus()))
                 .date(orderEntity.getDate())
                 .build();
-        kafkaTemplate.send("order", Long.toString(orderEntity.getId()), orderMessage);
+        messageProducerService.send(orderEntity.getId().toString(), orderMessage);
         return converter.convertOrderEntityToOrderResponse(orderEntity);
     }
 
     public List<OrderResponse> getAllOrders() {
-        return orderRepository.findAll().stream().map(o -> converter.convertOrderEntityToOrderResponse(o)).toList();
+        return orderRepository.findAll().stream().map(converter::convertOrderEntityToOrderResponse).toList();
     }
 
     public List<OrderResponse> getAllOrdersByCustomerName(String customerName) {
-        return orderRepository.findAllByCustomerName(customerName).stream().map(o -> converter.convertOrderEntityToOrderResponse(o)).toList();
+        return orderRepository.findAllByCustomerName(customerName).stream().map(converter::convertOrderEntityToOrderResponse).toList();
     }
 
     public void updateOrder(String key, OrderMessage orderMessage) {
-        Long id = Long.parseLong(key);
-        orderRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        UUID uuid = UUID.fromString(key);
+        orderRepository.findById(uuid).orElseThrow(NoSuchElementException::new);
         OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setId(id);
+        orderEntity.setId(uuid);
         orderEntity.setPizza(orderMessage.getPizza());
         orderEntity.setComment(orderMessage.getComment());
         orderEntity.setStatus(orderMessage.getStatus().toString());

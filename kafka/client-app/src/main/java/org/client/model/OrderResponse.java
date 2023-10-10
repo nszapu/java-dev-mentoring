@@ -13,6 +13,6 @@ public class OrderResponse {
     private String pizza;
     private String comment;
     private Status status;
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 }

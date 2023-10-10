@@ -18,6 +18,6 @@ public class OrderMessage {
     private String name;
     private String address;
     private String phoneNumber;
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 }

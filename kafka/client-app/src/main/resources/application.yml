@@ -15,21 +15,26 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     producer:
+      acks: 1
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer
       properties:
         "[schema.registry.url]": http://localhost:8081
-#    consumer:
-#      group-id: client-group
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer
-#      properties:
-#        "[schema.registry.url]": http://localhost:8081
-#    listener:
-#      concurrency: 3
+    consumer:
+      group-id: client-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer
+      properties:
+        "[schema.registry.url]": http://localhost:8081
+    listener:
+      concurrency: 3
 flyway:
   url: jdbc:postgresql://localhost:5432/kafka
   user: postgres
   password: postgres
 server:
   port: 8082
+kafka:
+  topic:
+    to-produce-to: order
+    to-consume-from: notification

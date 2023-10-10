@@ -4,7 +4,7 @@ create table if not exists customers (
     phone_number varchar(255)
 );
 create table if not exists orders (
-	id bigserial primary key,
+	id uuid primary key,
 	customer_name varchar(255),
 	pizza varchar(255),
 	comment varchar(255),

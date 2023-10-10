@@ -11,15 +11,15 @@ import java.util.Objects;
 
 @Slf4j
 @Component
-public class KafkaListenerService {
+public class MessageListenerService {
 
-    private CookingService service;
+    private final CookingService service;
 
-    public KafkaListenerService(CookingService service) {
+    public MessageListenerService(CookingService service) {
         this.service = service;
     }
 
-    @KafkaListener(topics = "order")
+    @KafkaListener(topics = "${kafka.topic.to-consume-from}")
     public void listener(ConsumerRecord<String, OrderMessage> record) {
         log.info(record.toString());
         if (Objects.equals(record.value().getStatus(), Status.RECEIVED)) {

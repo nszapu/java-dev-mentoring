@@ -8,15 +8,15 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class KafkaListenerService {
+public class MessageListenerService {
 
-    private OrderService service;
+    private final OrderService service;
 
-    public KafkaListenerService(OrderService service) {
+    public MessageListenerService(OrderService service) {
         this.service = service;
     }
 
-    @KafkaListener(topics = "notification")
+    @KafkaListener(topics = "${kafka.topic.to-consume-from}")
     public void listener(ConsumerRecord<String, OrderMessage> record) {
         log.info(record.toString());
         service.updateOrder(record.key(), record.value());
