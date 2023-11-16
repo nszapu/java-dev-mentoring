@@ -3,7 +3,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/kafka
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password: postgres
+    password: password
   jpa:
     properties:
       hibernate:

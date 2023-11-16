@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderConverter {
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public OrderConverter(ObjectMapper mapper) {
         this.mapper = mapper;

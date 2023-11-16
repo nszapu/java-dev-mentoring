@@ -2,11 +2,13 @@ package org.client.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
 
+@AllArgsConstructor
 @Builder
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)

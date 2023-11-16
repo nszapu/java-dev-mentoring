@@ -1,8 +1,11 @@
 package org.client.model;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class OrderRequest {
 
     private String pizza;

@@ -58,15 +58,16 @@ public class OrderService {
 
     public void updateOrder(String key, OrderMessage orderMessage) {
         UUID uuid = UUID.fromString(key);
-        orderRepository.findById(uuid).orElseThrow(NoSuchElementException::new);
-        OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setId(uuid);
-        orderEntity.setPizza(orderMessage.getPizza());
-        orderEntity.setComment(orderMessage.getComment());
-        orderEntity.setStatus(orderMessage.getStatus().toString());
-        orderEntity.setDate(orderMessage.getDate());
-        orderEntity.setCustomer(new CustomerEntity(orderMessage.getName(), orderMessage.getAddress(), orderMessage.getPhoneNumber()));
-        OrderEntity updatedOrder = orderRepository.save(orderEntity);
-        log.info(String.format("Updated %s in db.", updatedOrder));
+        if (orderRepository.existsById(uuid)) {
+            OrderEntity orderEntity = new OrderEntity();
+            orderEntity.setId(uuid);
+            orderEntity.setPizza(orderMessage.getPizza());
+            orderEntity.setComment(orderMessage.getComment());
+            orderEntity.setStatus(orderMessage.getStatus().toString());
+            orderEntity.setDate(orderMessage.getDate());
+            orderEntity.setCustomer(new CustomerEntity(orderMessage.getName(), orderMessage.getAddress(), orderMessage.getPhoneNumber()));
+            OrderEntity updatedOrder = orderRepository.save(orderEntity);
+            log.info("Updated {} in db.", updatedOrder);
+        }
     }
 }
