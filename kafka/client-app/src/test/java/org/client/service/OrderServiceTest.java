@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,18 +69,30 @@ public class OrderServiceTest {
 
     @Test
     void getAllOrders() {
-        when(orderRepository.findAll()).thenReturn(new ArrayList<>(){{add(orderEntity); add(orderEntity);}});
+        when(orderRepository.findAll()).thenReturn(new ArrayList<>() {{
+            add(orderEntity);
+            add(orderEntity);
+        }});
         when(orderConverter.convertOrderEntityToOrderResponse(isA(OrderEntity.class))).thenReturn(orderResponse);
-        List<OrderResponse> expectedOrderResponses = new ArrayList<>(){{add(orderResponse); add(orderResponse);}};
+        List<OrderResponse> expectedOrderResponses = new ArrayList<>() {{
+            add(orderResponse);
+            add(orderResponse);
+        }};
         List<OrderResponse> actualOrderResponses = orderService.getAllOrders();
         assertEquals(expectedOrderResponses, actualOrderResponses);
     }
 
     @Test
     void getAllOrdersByCustomerName() {
-        when(orderRepository.findAllByCustomerName(isA(String.class))).thenReturn(new ArrayList<>(){{add(orderEntity); add(orderEntity);}});
+        when(orderRepository.findAllByCustomerName(isA(String.class))).thenReturn(new ArrayList<>() {{
+            add(orderEntity);
+            add(orderEntity);
+        }});
         when(orderConverter.convertOrderEntityToOrderResponse(isA(OrderEntity.class))).thenReturn(orderResponse);
-        List<OrderResponse> expectedOrderResponses = new ArrayList<>(){{add(orderResponse); add(orderResponse);}};
+        List<OrderResponse> expectedOrderResponses = new ArrayList<>() {{
+            add(orderResponse);
+            add(orderResponse);
+        }};
         List<OrderResponse> actualOrderResponses = orderService.getAllOrdersByCustomerName("name");
         assertEquals(expectedOrderResponses, actualOrderResponses);
     }

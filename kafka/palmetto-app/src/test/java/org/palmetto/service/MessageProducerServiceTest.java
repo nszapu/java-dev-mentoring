@@ -29,7 +29,7 @@ public class MessageProducerServiceTest {
         ReflectionTestUtils.setField(service, "topic", "topic");
         String key = "key";
         OrderMessage value = new OrderMessage("pizza", "comment", Status.READY, "name", "address", "phone-number", LocalDate.now());
-        when(kafkaTemplate.send(isA(String.class) ,isA(String.class), isA(OrderMessage.class))).thenReturn(new CompletableFuture<>());
+        when(kafkaTemplate.send(isA(String.class), isA(String.class), isA(OrderMessage.class))).thenReturn(new CompletableFuture<>());
         service.send(key, value);
     }
 }

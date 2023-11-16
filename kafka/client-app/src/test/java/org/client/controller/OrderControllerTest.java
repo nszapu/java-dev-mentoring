@@ -41,33 +41,36 @@ public class OrderControllerTest {
     public static void setup() {
         orderResponse = new OrderResponse("pizza", "comment", Status.RECEIVED, LocalDate.of(2023, 11, 7));
         expectedResponseBody = """
-                        [
-                            {
-                                "pizza":"pizza",
-                                "comment":"comment",
-                                "status":"RECEIVED",
-                                "date":"2023-11-07"
-                            },
-                            {
-                                "pizza":"pizza",
-                                "comment":"comment",
-                                "status":"RECEIVED",
-                                "date":"2023-11-07"
-                            }
-                        ]
-                        """;
+                [
+                    {
+                        "pizza":"pizza",
+                        "comment":"comment",
+                        "status":"RECEIVED",
+                        "date":"2023-11-07"
+                    },
+                    {
+                        "pizza":"pizza",
+                        "comment":"comment",
+                        "status":"RECEIVED",
+                        "date":"2023-11-07"
+                    }
+                ]
+                """;
     }
 
     @SneakyThrows
     @Test
     void getOrders() {
         // given
-        when(service.getAllOrders()).thenReturn(new ArrayList<>(){{add(orderResponse); add(orderResponse);}});
+        when(service.getAllOrders()).thenReturn(new ArrayList<>() {{
+            add(orderResponse);
+            add(orderResponse);
+        }});
         // when
         mvc.perform(get("/api/orders")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-        // then
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                // then
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponseBody));
@@ -77,13 +80,16 @@ public class OrderControllerTest {
     @Test
     void getOrdersByCustomerName() {
         // given
-        when(service.getAllOrdersByCustomerName(isA(String.class))).thenReturn(new ArrayList<>(){{add(orderResponse); add(orderResponse);}});
+        when(service.getAllOrdersByCustomerName(isA(String.class))).thenReturn(new ArrayList<>() {{
+            add(orderResponse);
+            add(orderResponse);
+        }});
         // when
         mvc.perform(get("/api/orders")
-                .param("customerName", "name")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-        // then
+                        .param("customerName", "name")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                // then
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponseBody));
@@ -107,10 +113,10 @@ public class OrderControllerTest {
                 """;
         // when
         mvc.perform(post("/api/orders")
-                .content(body)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-        // then
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                // then
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().json("""

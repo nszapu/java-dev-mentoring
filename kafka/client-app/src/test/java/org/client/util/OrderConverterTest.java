@@ -7,7 +7,6 @@ import org.client.dao.entity.OrderEntity;
 import org.client.model.Customer;
 import org.client.model.OrderRequest;
 import org.client.model.OrderResponse;
-import org.client.model.Status;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
