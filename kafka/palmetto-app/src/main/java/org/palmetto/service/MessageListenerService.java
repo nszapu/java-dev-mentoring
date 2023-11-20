@@ -9,15 +9,12 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 @Slf4j
 @Component
 public class MessageListenerService {
 
     private final CookingService service;
-    @Getter
-    private CountDownLatch latch = new CountDownLatch(1);
     @Getter
     private OrderMessage payload;
 
@@ -32,10 +29,5 @@ public class MessageListenerService {
         if (Objects.equals(record.value().getStatus(), Status.RECEIVED)) {
             service.cook(record.key(), record.value());
         }
-        latch.countDown();
-    }
-
-    public void resetLatch() {
-        latch = new CountDownLatch(1);
     }
 }

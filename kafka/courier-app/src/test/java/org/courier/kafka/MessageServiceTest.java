@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.awaitility.Awaitility.await;
 
 @DirtiesContext
 @SpringBootTest
@@ -45,8 +45,7 @@ public class MessageServiceTest {
         messageProducerService.send(UUID.randomUUID().toString(), orderMessage);
 
         orderMessage.setStatus(Status.DELIVERED);
-        boolean messageConsumed = messageListenerService.getLatch().await(10, TimeUnit.SECONDS);
-        assertTrue(messageConsumed);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> messageListenerService.getPayload() != null);
         assertThat(messageListenerService.getPayload())
                 .usingRecursiveComparison()
                 .isEqualTo(orderMessage);
