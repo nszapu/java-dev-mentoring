@@ -1,0 +1,4 @@
+kafka:
+  topic:
+    to-produce-to: order
+    to-consume-from: order
